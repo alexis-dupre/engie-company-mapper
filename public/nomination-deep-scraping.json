@@ -1,0 +1,1343 @@
+{
+  "company": {
+    "accountId": "70305",
+    "allTags": [
+      "Energie",
+      "Services environnementaux, facility management",
+      "Grande entreprise",
+      "CA + de 2000 M€",
+      "plus de 10000 salariés",
+      "Entreprises avec activité à l'international",
+      "Entreprises BtoB et BtoC",
+      "Entreprises à mission",
+      "CAC 40",
+      "SBF 120",
+      "Annonceur",
+      "Investissements pub en décroissance",
+      "Les champions de la relation clients_2022",
+      "Le Top RSE",
+      "IDCC: \n    1256",
+      "IDCC: \n    1486",
+      "IDCC: \n    2120",
+      "IDCC: \n    5001"
+    ],
+    "depth": 0,
+    "name": "Engie",
+    "parentCompany": null,
+    "profileUrl": "https://app.nomination.fr/account/70305/subsidiaries",
+    "subsidiaries": [
+      {
+        "accountId": "62038",
+        "allTags": [
+          "Energie",
+          "Filiales de type ETI",
+          "2000 à 4999 salariés",
+          "Entreprises avec activité à l'international",
+          "Filiales de groupes",
+          "Entreprises BtoB",
+          "Filiales SBF120",
+          "Filiales du CAC40",
+          "120 ans d'anniversaire en 2025",
+          "IDCC: \n    1486"
+        ],
+        "depth": 1,
+        "name": "Engie Renouvelables",
+        "parentCompany": {
+          "name": "Engie",
+          "nominationLink": "https://app.nomination.fr/account/70305"
+        },
+        "profileUrl": "https://app.nomination.fr/account/62038",
+        "subsidiaries": [
+          {
+            "accountId": "92612",
+            "allTags": [
+              "Energie",
+              "Filiales de type ETI",
+              "CA entre 200 et 500 M€",
+              "Entreprises avec activité à l'international",
+              "Filiales de groupes",
+              "Entreprises BtoB et BtoC",
+              "Filiales SBF120",
+              "Filiales du CAC40"
+            ],
+            "depth": 2,
+            "name": "Engie Solar",
+            "parentCompany": {
+              "name": "Engie Renouvelables",
+              "nominationLink": "https://app.nomination.fr/account/62038"
+            },
+            "profileUrl": "https://app.nomination.fr/account/92612",
+            "subsidiaries": [],
+            "tag": "Energie",
+            "website": "https://www.engie.com"
+          }
+        ],
+        "tag": "Energie",
+        "website": "https://www.engie.com/activites/renouvelables"
+      },
+      {
+        "accountId": "70500",
+        "allTags": [
+          "Energie",
+          "Services environnementaux, facility management",
+          "Grande entreprise",
+          "CA + de 2000 M€",
+          "plus de 10000 salariés",
+          "Entreprises avec activité à l'international",
+          "Filiales de groupes",
+          "Entreprises BtoB",
+          "Filiales SBF120",
+          "Filiales du CAC40",
+          "5 ans d'anniversaire en 2025",
+          "IDCC: \n    0998",
+          "IDCC: \n    1516",
+          "IDCC: \n    2420",
+          "IDCC: \n    2609"
+        ],
+        "depth": 1,
+        "name": "Engie Solutions",
+        "parentCompany": {
+          "name": "Engie",
+          "nominationLink": "https://app.nomination.fr/account/70305"
+        },
+        "profileUrl": "https://app.nomination.fr/account/70500",
+        "subsidiaries": [
+          {
+            "accountId": "57218",
+            "allTags": [
+              "Energie",
+              "Filiales de type ETI",
+              "CA entre 100 et 200 M€",
+              "Filiales de groupes",
+              "Filiales SBF120",
+              "Filiales du CAC40",
+              "IDCC: \n    0998",
+              "IDCC: \n    1408"
+            ],
+            "depth": 2,
+            "name": "GNVert",
+            "parentCompany": {
+              "name": "Engie Solutions",
+              "nominationLink": "https://app.nomination.fr/account/70500"
+            },
+            "profileUrl": "https://app.nomination.fr/account/57218",
+            "subsidiaries": [],
+            "tag": "Energie",
+            "website": "http://www.engie.fr/gaz-naturel/gnvert"
+          },
+          {
+            "accountId": "318958",
+            "allTags": [
+              "Conseil en management, stratégie",
+              "Filiales de type ETI",
+              "1000 à 1999 salariés",
+              "Filiales de groupes",
+              "Entreprises BtoB",
+              "Filiales SBF120",
+              "Filiales du CAC40"
+            ],
+            "depth": 2,
+            "name": "Engie Impact",
+            "parentCompany": {
+              "name": "Engie Solutions",
+              "nominationLink": "https://app.nomination.fr/account/70500"
+            },
+            "profileUrl": "https://app.nomination.fr/account/318958",
+            "subsidiaries": [],
+            "tag": "Conseil en management, stratégie",
+            "website": "https://www.engieimpact.com/"
+          },
+          {
+            "accountId": "37837",
+            "allTags": [
+              "BTP, construction",
+              "Filiales de type PME",
+              "CA entre 20 et 50 M€",
+              "50 à 99 salariés",
+              "Filiales de groupes",
+              "Entreprises BtoB et BtoC",
+              "Filiales SBF120",
+              "Filiales du CAC40"
+            ],
+            "depth": 2,
+            "name": "SAEM Energies",
+            "parentCompany": {
+              "name": "Engie Solutions",
+              "nominationLink": "https://app.nomination.fr/account/70500"
+            },
+            "profileUrl": "https://app.nomination.fr/account/37837",
+            "subsidiaries": [],
+            "tag": "BTP, construction",
+            "website": "https://www.saem-energies.fr/"
+          },
+          {
+            "accountId": "53158",
+            "allTags": [
+              "Support, maintenance et logistique",
+              "Conseil en relations publiques, communication, marketing",
+              "Filiales de type PME",
+              "CA entre 5 et 20 M€",
+              "20 à 49 salariés",
+              "Filiales de groupes",
+              "Entreprises BtoB",
+              "Filiales SBF120",
+              "Filiales du CAC40",
+              "Annonceur",
+              "Investissements pub en croissance",
+              "IDCC: \n    1486"
+            ],
+            "depth": 2,
+            "name": "SPAS",
+            "parentCompany": {
+              "name": "Engie Solutions",
+              "nominationLink": "https://app.nomination.fr/account/70500"
+            },
+            "profileUrl": "https://app.nomination.fr/account/53158",
+            "subsidiaries": [],
+            "tag": "Support, maintenance et logistique",
+            "website": "http://www.spas-expo.com"
+          },
+          {
+            "accountId": "33482",
+            "allTags": [
+              "Energie",
+              "Grande entreprise",
+              "CA entre 1000 et 2000 M€",
+              "Filiales de groupes",
+              "Entreprises BtoB",
+              "Filiales SBF120",
+              "Filiales du CAC40",
+              "IDCC: \n    0998",
+              "IDCC: \n    1256"
+            ],
+            "depth": 2,
+            "name": "Soven",
+            "parentCompany": {
+              "name": "Engie Solutions",
+              "nominationLink": "https://app.nomination.fr/account/70500"
+            },
+            "profileUrl": "https://app.nomination.fr/account/33482",
+            "subsidiaries": [],
+            "tag": "Energie",
+            "website": null
+          },
+          {
+            "accountId": "191667",
+            "allTags": [
+              "Ingénierie, certifications et inspections techniques",
+              "BTP, construction",
+              "Filiales de type PME",
+              "CA entre 5 et 20 M€",
+              "50 à 99 salariés",
+              "Filiales de groupes",
+              "Entreprises BtoB",
+              "Filiales SBF120",
+              "Filiales du CAC40",
+              "15 ans d'anniversaire en 2025",
+              "IDCC: \n    1486"
+            ],
+            "depth": 2,
+            "name": "SXD",
+            "parentCompany": {
+              "name": "Engie Solutions",
+              "nominationLink": "https://app.nomination.fr/account/70500"
+            },
+            "profileUrl": "https://app.nomination.fr/account/191667",
+            "subsidiaries": [],
+            "tag": "Ingénierie, certifications et inspections techniques",
+            "website": "https://www.sxd-groupe.fr"
+          }
+        ],
+        "tag": "Energie",
+        "website": "https://www.engie-solutions.com/fr"
+      },
+      {
+        "accountId": "111561",
+        "allTags": [
+          "Energie",
+          "Filiales de type ETI",
+          "CA entre 50 et 100 M€",
+          "Entreprises avec activité à l'international",
+          "Filiales de groupes",
+          "Entreprises BtoB",
+          "BPI ETI 2020",
+          "Entreprises innovantes",
+          "Filiales SBF120",
+          "Filiales du CAC40"
+        ],
+        "depth": 1,
+        "name": "Langa",
+        "parentCompany": {
+          "name": "Engie",
+          "nominationLink": "https://app.nomination.fr/account/70305"
+        },
+        "profileUrl": "https://app.nomination.fr/account/111561",
+        "subsidiaries": [
+          {
+            "accountId": "112478",
+            "allTags": [
+              "Energie",
+              "Filiales de type PME",
+              "10 à 19 salariés",
+              "Filiales de groupes",
+              "Entreprises BtoB et BtoC",
+              "Filiales SBF120",
+              "Filiales du CAC40",
+              "20 ans d'anniversaire en 2025",
+              "Leaders régionaux - DROM",
+              "IDCC: \n    0627",
+              "IDCC: \n    2389"
+            ],
+            "depth": 2,
+            "name": "Ixeo Solar",
+            "parentCompany": {
+              "name": "Langa",
+              "nominationLink": "https://app.nomination.fr/account/111561"
+            },
+            "profileUrl": "https://app.nomination.fr/account/112478",
+            "subsidiaries": [],
+            "tag": "Energie",
+            "website": "https://www.ixeo.re/"
+          },
+          {
+            "accountId": "310174",
+            "allTags": [
+              "Energie",
+              "Filiales de type PME",
+              "CA moins de 5 M€",
+              "10 à 19 salariés",
+              "Entreprises avec activité à l'international",
+              "Filiales de groupes",
+              "Entreprises BtoB",
+              "Filiales SBF120",
+              "Filiales du CAC40",
+              "IDCC: \n    1486"
+            ],
+            "depth": 2,
+            "name": "Langa International",
+            "parentCompany": {
+              "name": "Langa",
+              "nominationLink": "https://app.nomination.fr/account/111561"
+            },
+            "profileUrl": "https://app.nomination.fr/account/310174",
+            "subsidiaries": [],
+            "tag": "Energie",
+            "website": "https://langa-international.com/"
+          }
+        ],
+        "tag": "Energie",
+        "website": "http://www.langa.fr"
+      },
+      {
+        "accountId": "70389",
+        "allTags": [
+          "Services environnementaux, facility management",
+          "Ingénierie, certifications et inspections techniques",
+          "Filiales de type ETI",
+          "500 à 999 salariés",
+          "Entreprises publiques",
+          "Filiales de groupes",
+          "Entreprises BtoB",
+          "Filiales SBF120",
+          "Filiales du CAC40",
+          "70 ans d'anniversaire en 2025",
+          "Leaders régionaux - Occitanie",
+          "IDCC: \n    1486",
+          "IDCC: \n    2147"
+        ],
+        "depth": 1,
+        "name": "BRL",
+        "parentCompany": {
+          "name": "Engie",
+          "nominationLink": "https://app.nomination.fr/account/70305"
+        },
+        "profileUrl": "https://app.nomination.fr/account/70389",
+        "subsidiaries": [
+          {
+            "accountId": "52671",
+            "allTags": [
+              "Ingénierie, certifications et inspections techniques",
+              "Filiales de type PME",
+              "CA entre 20 et 50 M€",
+              "200 à 249 salariés",
+              "Entreprises publiques",
+              "Filiales de groupes",
+              "Entreprises BtoB",
+              "Filiales SBF120",
+              "Filiales du CAC40",
+              "70 ans d'anniversaire en 2025",
+              "Le Top RSE",
+              "Leaders régionaux - Occitanie",
+              "IDCC: \n    1486"
+            ],
+            "depth": 2,
+            "name": "BRL Ingénierie",
+            "parentCompany": {
+              "name": "BRL",
+              "nominationLink": "https://app.nomination.fr/account/70389"
+            },
+            "profileUrl": "https://app.nomination.fr/account/52671",
+            "subsidiaries": [],
+            "tag": "Ingénierie, certifications et inspections techniques",
+            "website": "https://www.brl.fr"
+          },
+          {
+            "accountId": "116544",
+            "allTags": [
+              "Services environnementaux, facility management",
+              "Filiales de type PME",
+              "CA entre 5 et 20 M€",
+              "50 à 99 salariés",
+              "Entreprises publiques",
+              "Filiales de groupes",
+              "Filiales SBF120",
+              "Filiales du CAC40",
+              "IDCC: \n    7018"
+            ],
+            "depth": 2,
+            "name": "Brl Espaces Naturels",
+            "parentCompany": {
+              "name": "BRL",
+              "nominationLink": "https://app.nomination.fr/account/70389"
+            },
+            "profileUrl": "https://app.nomination.fr/account/116544",
+            "subsidiaries": [],
+            "tag": "Services environnementaux, facility management",
+            "website": "http://www.brl.fr"
+          }
+        ],
+        "tag": "Services environnementaux, facility management",
+        "website": "https://www.brl.fr"
+      },
+      {
+        "accountId": "308765",
+        "allTags": [
+          "Support, maintenance et logistique",
+          "Energie",
+          "Filiales de type ETI",
+          "2000 à 4999 salariés",
+          "Entreprises avec activité à l'international",
+          "Filiales de groupes",
+          "Entreprises BtoB",
+          "Filiales SBF120",
+          "Filiales du CAC40"
+        ],
+        "depth": 1,
+        "name": "Engie Global Energy Management & Sales",
+        "parentCompany": {
+          "name": "Engie",
+          "nominationLink": "https://app.nomination.fr/account/70305"
+        },
+        "profileUrl": "https://app.nomination.fr/account/308765",
+        "subsidiaries": [
+          {
+            "accountId": "279836",
+            "allTags": [
+              "Energie",
+              "Filiales de type ETI",
+              "250 à 499 salariés",
+              "Filiales de groupes",
+              "Entreprises BtoB",
+              "Filiales SBF120",
+              "Filiales du CAC40",
+              "IDCC: \n    0200",
+              "IDCC: \n    2120",
+              "IDCC: \n    2121",
+              "IDCC: \n    5001"
+            ],
+            "depth": 2,
+            "name": "Engie Global Markets",
+            "parentCompany": {
+              "name": "Engie Global Energy Management & Sales",
+              "nominationLink": "https://app.nomination.fr/account/308765"
+            },
+            "profileUrl": "https://app.nomination.fr/account/279836",
+            "subsidiaries": [],
+            "tag": "Energie",
+            "website": "https://www.engie-globalmarkets.com/"
+          }
+        ],
+        "tag": "Support, maintenance et logistique",
+        "website": "https://gems.engie.com/"
+      },
+      {
+        "accountId": "308717",
+        "allTags": [
+          "Energie",
+          "Entreprises avec activité à l'international",
+          "Filiales de groupes",
+          "Entreprises BtoB",
+          "Filiales SBF120",
+          "Filiales du CAC40"
+        ],
+        "depth": 1,
+        "name": "Engie Infrastructures",
+        "parentCompany": {
+          "name": "Engie",
+          "nominationLink": "https://app.nomination.fr/account/70305"
+        },
+        "profileUrl": "https://app.nomination.fr/account/308717",
+        "subsidiaries": [
+          {
+            "accountId": "62272",
+            "allTags": [
+              "Energie",
+              "Distribution BtoB, négoce",
+              "Grande entreprise",
+              "CA + de 2000 M€",
+              "plus de 10000 salariés",
+              "Entreprises avec activité à l'international",
+              "Filiales de groupes",
+              "Entreprises BtoB",
+              "Filiales SBF120",
+              "Filiales du CAC40"
+            ],
+            "depth": 2,
+            "name": "GRDF",
+            "parentCompany": {
+              "name": "Engie Infrastructures",
+              "nominationLink": "https://app.nomination.fr/account/308717"
+            },
+            "profileUrl": "https://app.nomination.fr/account/62272",
+            "subsidiaries": [],
+            "tag": "Energie",
+            "website": "https://www.grdf.fr"
+          },
+          {
+            "accountId": "65902",
+            "allTags": [
+              "Energie",
+              "Support, maintenance et logistique",
+              "Filiales de type ETI",
+              "CA entre 500 et 1000 M€",
+              "1000 à 1999 salariés",
+              "Filiales de groupes",
+              "Entreprises BtoB",
+              "Filiales SBF120",
+              "Filiales du CAC40",
+              "IDCC: \n    5001"
+            ],
+            "depth": 2,
+            "name": "Storengy",
+            "parentCompany": {
+              "name": "Engie Infrastructures",
+              "nominationLink": "https://app.nomination.fr/account/308717"
+            },
+            "profileUrl": "https://app.nomination.fr/account/65902",
+            "subsidiaries": [],
+            "tag": "Energie",
+            "website": "https://www.storengy.com"
+          },
+          {
+            "accountId": "61021",
+            "allTags": [
+              "Energie",
+              "Infrastructures de transport",
+              "Grande entreprise",
+              "CA entre 1000 et 2000 M€",
+              "2000 à 4999 salariés",
+              "Entreprises avec activité à l'international",
+              "Filiales de groupes",
+              "Entreprises BtoB",
+              "Filiales SBF120",
+              "Filiales du CAC40",
+              "20 ans d'anniversaire en 2025",
+              "IDCC: \n    5001"
+            ],
+            "depth": 2,
+            "name": "NaTran",
+            "parentCompany": {
+              "name": "Engie Infrastructures",
+              "nominationLink": "https://app.nomination.fr/account/308717"
+            },
+            "profileUrl": "https://app.nomination.fr/account/61021",
+            "subsidiaries": [],
+            "tag": "Energie",
+            "website": "https://www.natrangroupe.com/"
+          },
+          {
+            "accountId": "27828",
+            "allTags": [
+              "Energie",
+              "Filiales de type ETI",
+              "CA entre 100 et 200 M€",
+              "250 à 499 salariés",
+              "Filiales de groupes",
+              "Filiales SBF120",
+              "Filiales du CAC40",
+              "IDCC: \n    5001"
+            ],
+            "depth": 2,
+            "name": "Elengy",
+            "parentCompany": {
+              "name": "Engie Infrastructures",
+              "nominationLink": "https://app.nomination.fr/account/308717"
+            },
+            "profileUrl": "https://app.nomination.fr/account/27828",
+            "subsidiaries": [],
+            "tag": "Energie",
+            "website": "https://www.elengy.com/"
+          }
+        ],
+        "tag": "Energie",
+        "website": "https://www.engie.com/activites/infrastructures"
+      },
+      {
+        "accountId": "308704",
+        "allTags": [
+          "Energie",
+          "Grande entreprise",
+          "CA + de 2000 M€",
+          "plus de 10000 salariés",
+          "Filiales de groupes",
+          "Entreprises BtoB",
+          "Filiales SBF120",
+          "Filiales du CAC40"
+        ],
+        "depth": 1,
+        "name": "Engie Local Energy Infrastructures",
+        "parentCompany": {
+          "name": "Engie",
+          "nominationLink": "https://app.nomination.fr/account/70305"
+        },
+        "profileUrl": "https://app.nomination.fr/account/308704",
+        "subsidiaries": [
+          {
+            "accountId": "119413",
+            "allTags": [
+              "Distribution spécialisée",
+              "Matériels et composants électroniques, électriques, informatique professionnelle",
+              "Filiales de type PME",
+              "CA entre 5 et 20 M€",
+              "50 à 99 salariés",
+              "Filiales de groupes étrangers basées en France",
+              "Filiales de groupes",
+              "Entreprises BtoC",
+              "Maison mère aux Pays-Bas",
+              "Filiales SBF120",
+              "Filiales du CAC40",
+              "15 ans d'anniversaire en 2025",
+              "IDCC: \n    1090",
+              "IDCC: \n    1486"
+            ],
+            "depth": 2,
+            "name": "EV-Box France",
+            "parentCompany": {
+              "name": "Engie Local Energy Infrastructures",
+              "nominationLink": "https://app.nomination.fr/account/308704"
+            },
+            "profileUrl": "https://app.nomination.fr/account/119413",
+            "subsidiaries": [],
+            "tag": "Distribution spécialisée",
+            "website": "https://evbox.com/fr-fr"
+          },
+          {
+            "accountId": "103214",
+            "allTags": [
+              "Editeurs de logiciels",
+              "Filiales de type PME",
+              "CA entre 5 et 20 M€",
+              "100 à 199 salariés",
+              "Filiales de groupes",
+              "Entreprises BtoB",
+              "Filiales SBF120",
+              "Filiales du CAC40",
+              "IDCC: \n    1486"
+            ],
+            "depth": 2,
+            "name": "Siradel",
+            "parentCompany": {
+              "name": "Engie Local Energy Infrastructures",
+              "nominationLink": "https://app.nomination.fr/account/308704"
+            },
+            "profileUrl": "https://app.nomination.fr/account/103214",
+            "subsidiaries": [],
+            "tag": "Editeurs de logiciels",
+            "website": "http://www.siradel.com"
+          },
+          {
+            "accountId": "42600",
+            "allTags": [
+              "Ingénierie, certifications et inspections techniques",
+              "Filiales de type ETI",
+              "CA entre 100 et 200 M€",
+              "500 à 999 salariés",
+              "Filiales de groupes",
+              "Entreprises BtoB",
+              "Filiales SBF120",
+              "Filiales du CAC40",
+              "IDCC: \n    1486"
+            ],
+            "depth": 2,
+            "name": "Tractebel",
+            "parentCompany": {
+              "name": "Engie Local Energy Infrastructures",
+              "nominationLink": "https://app.nomination.fr/account/308704"
+            },
+            "profileUrl": "https://app.nomination.fr/account/42600",
+            "subsidiaries": [],
+            "tag": "Ingénierie, certifications et inspections techniques",
+            "website": "https://tractebel-engie.fr/fr"
+          }
+        ],
+        "tag": "Energie",
+        "website": "https://www.engie.com/activites/energy-solutions"
+      },
+      {
+        "accountId": "117914",
+        "allTags": [
+          "Energie",
+          "Filiales de groupes",
+          "Entreprises basées à l'étranger",
+          "Filiales SBF120",
+          "Filiales du CAC40"
+        ],
+        "depth": 1,
+        "name": "Engie Mescat",
+        "parentCompany": {
+          "name": "Engie",
+          "nominationLink": "https://app.nomination.fr/account/70305"
+        },
+        "profileUrl": "https://app.nomination.fr/account/117914",
+        "subsidiaries": [],
+        "tag": "Energie",
+        "website": "https://engiemiddleeast.com/"
+      },
+      {
+        "accountId": "188265",
+        "allTags": [
+          "Ingénierie, certifications et inspections techniques",
+          "Filiales de type PME",
+          "CA entre 20 et 50 M€",
+          "50 à 99 salariés",
+          "Filiales de groupes",
+          "Entreprises BtoB",
+          "Filiales SBF120",
+          "Filiales du CAC40",
+          "40 ans d'anniversaire en 2025",
+          "Le Top RSE",
+          "IDCC: \n    1486"
+        ],
+        "depth": 1,
+        "name": "Majorelle",
+        "parentCompany": {
+          "name": "Engie",
+          "nominationLink": "https://app.nomination.fr/account/70305"
+        },
+        "profileUrl": "https://app.nomination.fr/account/188265",
+        "subsidiaries": [],
+        "tag": "Ingénierie, certifications et inspections techniques",
+        "website": "https://www.majorelle.fr/"
+      },
+      {
+        "accountId": "70279",
+        "allTags": [
+          "Services environnementaux, facility management",
+          "Filiales de type ETI",
+          "CA entre 200 et 500 M€",
+          "500 à 999 salariés",
+          "Filiales de groupes",
+          "Entreprises BtoB",
+          "Filiales SBF120",
+          "Filiales du CAC40",
+          "IDCC: \n    1256",
+          "IDCC: \n    5001"
+        ],
+        "depth": 1,
+        "name": "Compagnie parisienne de chauffage urbain",
+        "parentCompany": {
+          "name": "Engie",
+          "nominationLink": "https://app.nomination.fr/account/70305"
+        },
+        "profileUrl": "https://app.nomination.fr/account/70279",
+        "subsidiaries": [],
+        "tag": "Services environnementaux, facility management",
+        "website": "https://www.cpcu.fr"
+      },
+      {
+        "accountId": "68919",
+        "allTags": [
+          "Energie",
+          "Services environnementaux, facility management",
+          "Filiales de type ETI",
+          "CA entre 50 et 100 M€",
+          "250 à 499 salariés",
+          "Filiales de groupes",
+          "Entreprises BtoC",
+          "Filiales SBF120",
+          "Filiales du CAC40",
+          "IDCC: \n    1486"
+        ],
+        "depth": 1,
+        "name": "Effy",
+        "parentCompany": {
+          "name": "Engie",
+          "nominationLink": "https://app.nomination.fr/account/70305"
+        },
+        "profileUrl": "https://app.nomination.fr/account/68919",
+        "subsidiaries": [],
+        "tag": "Energie",
+        "website": "https://www.effy.fr"
+      },
+      {
+        "accountId": "41585",
+        "allTags": [
+          "Energie",
+          "BTP, construction",
+          "Filiales de type ETI",
+          "CA entre 500 et 1000 M€",
+          "2000 à 4999 salariés",
+          "Filiales de groupes",
+          "Entreprises BtoB",
+          "Filiales SBF120",
+          "Filiales du CAC40",
+          "20 ans d'anniversaire en 2025",
+          "IDCC: \n    0054",
+          "IDCC: \n    0650",
+          "IDCC: \n    3248"
+        ],
+        "depth": 1,
+        "name": "Engie Home Services",
+        "parentCompany": {
+          "name": "Engie",
+          "nominationLink": "https://app.nomination.fr/account/70305"
+        },
+        "profileUrl": "https://app.nomination.fr/account/41585",
+        "subsidiaries": [],
+        "tag": "Energie",
+        "website": "http://www.engie-homeservices.fr"
+      },
+      {
+        "accountId": "35928",
+        "allTags": [
+          "BTP, construction",
+          "Filiales de type PME",
+          "CA entre 20 et 50 M€",
+          "20 à 49 salariés",
+          "Filiales de groupes",
+          "Entreprises BtoB et BtoC",
+          "Filiales SBF120",
+          "Filiales du CAC40",
+          "Le Top RSE",
+          "Leaders régionaux - Grand Est",
+          "IDCC: \n    1597",
+          "IDCC: \n    2420",
+          "IDCC: \n    2609"
+        ],
+        "depth": 1,
+        "name": "Electricité gay",
+        "parentCompany": {
+          "name": "Engie",
+          "nominationLink": "https://app.nomination.fr/account/70305"
+        },
+        "profileUrl": "https://app.nomination.fr/account/35928",
+        "subsidiaries": [],
+        "tag": "BTP, construction",
+        "website": "http://www.gay-electricite.com"
+      },
+      {
+        "accountId": "28738",
+        "allTags": [
+          "Energie",
+          "Filiales de type ETI",
+          "CA entre 100 et 200 M€",
+          "500 à 999 salariés",
+          "Filiales de groupes",
+          "Entreprises BtoB et BtoC",
+          "Filiales SBF120",
+          "Filiales du CAC40",
+          "Leaders régionaux - Occitanie",
+          "IDCC: \n    1486"
+        ],
+        "depth": 1,
+        "name": "Engie Green",
+        "parentCompany": {
+          "name": "Engie",
+          "nominationLink": "https://app.nomination.fr/account/70305"
+        },
+        "profileUrl": "https://app.nomination.fr/account/28738",
+        "subsidiaries": [],
+        "tag": "Energie",
+        "website": "https://www.engie-green.fr"
+      },
+      {
+        "accountId": "55100",
+        "allTags": [
+          "Construction mécanique, métallurgie, sidérurgie, machines-outils",
+          "Filiales de type PME",
+          "CA entre 5 et 20 M€",
+          "50 à 99 salariés",
+          "Filiales de groupes",
+          "Entreprises BtoB",
+          "Filiales SBF120",
+          "Filiales du CAC40",
+          "IDCC: \n    0650",
+          "IDCC: \n    0965",
+          "IDCC: \n    2630",
+          "IDCC: \n    3248"
+        ],
+        "depth": 1,
+        "name": "Entrepose Navibord",
+        "parentCompany": {
+          "name": "Engie",
+          "nominationLink": "https://app.nomination.fr/account/70305"
+        },
+        "profileUrl": "https://app.nomination.fr/account/55100",
+        "subsidiaries": [],
+        "tag": "Construction mécanique, métallurgie, sidérurgie, machines-outils",
+        "website": null
+      },
+      {
+        "accountId": "173007",
+        "allTags": [
+          "Energie",
+          "Autres services aux entreprises ou aux collectivités",
+          "Filiales de type ETI",
+          "CA entre 50 et 100 M€",
+          "Filiales de groupes",
+          "Entreprises BtoB",
+          "Filiales SBF120",
+          "Filiales du CAC40"
+        ],
+        "depth": 1,
+        "name": "CertiNergy Solutions",
+        "parentCompany": {
+          "name": "Engie",
+          "nominationLink": "https://app.nomination.fr/account/70305"
+        },
+        "profileUrl": "https://app.nomination.fr/account/173007",
+        "subsidiaries": [],
+        "tag": "Energie",
+        "website": "https://certinergy.com/"
+      },
+      {
+        "accountId": "49026",
+        "allTags": [
+          "Construction mécanique, métallurgie, sidérurgie, machines-outils",
+          "Filiales de type PME",
+          "200 à 249 salariés",
+          "Filiales de groupes",
+          "Entreprises BtoB",
+          "Filiales SBF120",
+          "Filiales du CAC40",
+          "Leaders régionaux - Normandie",
+          "IDCC: \n    0054",
+          "IDCC: \n    0650",
+          "IDCC: \n    3248"
+        ],
+        "depth": 1,
+        "name": "ACE Normandie",
+        "parentCompany": {
+          "name": "Engie",
+          "nominationLink": "https://app.nomination.fr/account/70305"
+        },
+        "profileUrl": "https://app.nomination.fr/account/49026",
+        "subsidiaries": [],
+        "tag": "Construction mécanique, métallurgie, sidérurgie, machines-outils",
+        "website": "http://www.ace-normandie.com"
+      },
+      {
+        "accountId": "54335",
+        "allTags": [
+          "Enseignement, recherche, formation professionnelle",
+          "Filiales de type PME",
+          "CA entre 5 et 20 M€",
+          "Filiales de groupes",
+          "Entreprises BtoB et BtoC",
+          "Filiales SBF120",
+          "Filiales du CAC40"
+        ],
+        "depth": 1,
+        "name": "Engie University",
+        "parentCompany": {
+          "name": "Engie",
+          "nominationLink": "https://app.nomination.fr/account/70305"
+        },
+        "profileUrl": "https://app.nomination.fr/account/54335",
+        "subsidiaries": [],
+        "tag": "Enseignement, recherche, formation professionnelle",
+        "website": null
+      },
+      {
+        "accountId": "139407",
+        "allTags": [
+          "Autres services aux entreprises ou aux collectivités",
+          "Filiales de type ETI",
+          "250 à 499 salariés",
+          "Filiales de groupes",
+          "Entreprises BtoB",
+          "Filiales SBF120",
+          "Filiales du CAC40"
+        ],
+        "depth": 1,
+        "name": "Eseïs",
+        "parentCompany": {
+          "name": "Engie",
+          "nominationLink": "https://app.nomination.fr/account/70305"
+        },
+        "profileUrl": "https://app.nomination.fr/account/139407",
+        "subsidiaries": [],
+        "tag": "Autres services aux entreprises ou aux collectivités",
+        "website": "https://www.eseis.fr/"
+      },
+      {
+        "accountId": "70658",
+        "allTags": [
+          "Energie",
+          "Filiales de type ETI",
+          "CA entre 200 et 500 M€",
+          "250 à 499 salariés",
+          "Filiales de groupes",
+          "Entreprises BtoB et BtoC",
+          "Filiales SBF120",
+          "Filiales du CAC40",
+          "Leaders régionaux - Occitanie",
+          "IDCC: \n    5001"
+        ],
+        "depth": 1,
+        "name": "Société hydroélectrique du Midi",
+        "parentCompany": {
+          "name": "Engie",
+          "nominationLink": "https://app.nomination.fr/account/70305"
+        },
+        "profileUrl": "https://app.nomination.fr/account/70658",
+        "subsidiaries": [],
+        "tag": "Energie",
+        "website": "https://shem.fr/"
+      },
+      {
+        "accountId": "297110",
+        "allTags": [
+          "Plateformes digitales",
+          "Filiales de type PME",
+          "CA entre 5 et 20 M€",
+          "50 à 99 salariés",
+          "Filiales de groupes",
+          "Entreprises BtoB et BtoC",
+          "Filiales SBF120",
+          "Filiales du CAC40",
+          "IDCC: \n    2148"
+        ],
+        "depth": 1,
+        "name": "Habitatpresto",
+        "parentCompany": {
+          "name": "Engie",
+          "nominationLink": "https://app.nomination.fr/account/70305"
+        },
+        "profileUrl": "https://app.nomination.fr/account/297110",
+        "subsidiaries": [],
+        "tag": "Plateformes digitales",
+        "website": "http://www.habitatpresto.com/"
+      },
+      {
+        "accountId": "283930",
+        "allTags": [
+          "Support, maintenance et logistique",
+          "Filiales de type ETI",
+          "2000 à 4999 salariés",
+          "Entreprises avec activité à l'international",
+          "Filiales de groupes",
+          "Entreprises BtoB",
+          "Filiales SBF120",
+          "Filiales du CAC40",
+          "5 ans d'anniversaire en 2025",
+          "IDCC: \n    2098",
+          "IDCC: \n    5001"
+        ],
+        "depth": 1,
+        "name": "Engie GBS",
+        "parentCompany": {
+          "name": "Engie",
+          "nominationLink": "https://app.nomination.fr/account/70305"
+        },
+        "profileUrl": "https://app.nomination.fr/account/283930",
+        "subsidiaries": [],
+        "tag": "Support, maintenance et logistique",
+        "website": "https://gbsfinance.clientbook.engie.com/"
+      },
+      {
+        "accountId": "308719",
+        "allTags": [
+          "Energie",
+          "Grande entreprise",
+          "plus de 10000 salariés",
+          "Entreprises avec activité à l'international",
+          "Filiales de groupes",
+          "Entreprises BtoB et BtoC",
+          "Filiales SBF120",
+          "Filiales du CAC40",
+          "IDCC: \n    5001"
+        ],
+        "depth": 1,
+        "name": "Engie Production Flexible",
+        "parentCompany": {
+          "name": "Engie",
+          "nominationLink": "https://app.nomination.fr/account/70305"
+        },
+        "profileUrl": "https://app.nomination.fr/account/308719",
+        "subsidiaries": [],
+        "tag": "Energie",
+        "website": "https://www.engie.com/activites/thermique"
+      },
+      {
+        "accountId": "118030",
+        "allTags": [
+          "Energie",
+          "Filiales de type ETI",
+          "CA entre 200 et 500 M€",
+          "500 à 999 salariés",
+          "Filiales de groupes",
+          "Filiales SBF120",
+          "Filiales du CAC40"
+        ],
+        "depth": 1,
+        "name": "Engie Information et Technologies",
+        "parentCompany": {
+          "name": "Engie",
+          "nominationLink": "https://app.nomination.fr/account/70305"
+        },
+        "profileUrl": "https://app.nomination.fr/account/118030",
+        "subsidiaries": [],
+        "tag": "Energie",
+        "website": null
+      },
+      {
+        "accountId": "82574",
+        "allTags": [
+          "Fondations",
+          "Filiales de type PME",
+          "Filiales de groupes",
+          "Filiales SBF120",
+          "Filiales du CAC40"
+        ],
+        "depth": 1,
+        "name": "Fondation Engie",
+        "parentCompany": {
+          "name": "Engie",
+          "nominationLink": "https://app.nomination.fr/account/70305"
+        },
+        "profileUrl": "https://app.nomination.fr/account/82574",
+        "subsidiaries": [],
+        "tag": "Fondations",
+        "website": "https://fondation-engie.com/"
+      },
+      {
+        "accountId": "311133",
+        "allTags": [
+          "Energie",
+          "Services à la personne, action sociale",
+          "Filiales de type ETI",
+          "CA entre 100 et 200 M€",
+          "250 à 499 salariés",
+          "Filiales de groupes",
+          "Entreprises BtoB et BtoC",
+          "Filiales SBF120",
+          "Filiales du CAC40",
+          "IDCC: \n    0998",
+          "IDCC: \n    1256",
+          "IDCC: \n    1486",
+          "IDCC: \n    2098"
+        ],
+        "depth": 1,
+        "name": "Teksial",
+        "parentCompany": {
+          "name": "Engie",
+          "nominationLink": "https://app.nomination.fr/account/70305"
+        },
+        "profileUrl": "https://app.nomination.fr/account/311133",
+        "subsidiaries": [],
+        "tag": "Energie",
+        "website": "https://teksial.com/"
+      },
+      {
+        "accountId": "23809",
+        "allTags": [
+          "Services environnementaux, facility management",
+          "Filiales de type ETI",
+          "CA entre 50 et 100 M€",
+          "250 à 499 salariés",
+          "Filiales de groupes",
+          "Entreprises BtoB",
+          "Filiales SBF120",
+          "Filiales du CAC40",
+          "IDCC: \n    0998",
+          "IDCC: \n    1256",
+          "IDCC: \n    2098"
+        ],
+        "depth": 1,
+        "name": "Ciec",
+        "parentCompany": {
+          "name": "Engie",
+          "nominationLink": "https://app.nomination.fr/account/70305"
+        },
+        "profileUrl": "https://app.nomination.fr/account/23809",
+        "subsidiaries": [],
+        "tag": "Services environnementaux, facility management",
+        "website": "https://www.ciec.fr/"
+      },
+      {
+        "accountId": "38520",
+        "allTags": [
+          "BTP, construction",
+          "Filiales de type PME",
+          "CA entre 20 et 50 M€",
+          "50 à 99 salariés",
+          "Filiales de groupes",
+          "Entreprises BtoB et BtoC",
+          "Filiales SBF120",
+          "Filiales du CAC40",
+          "IDCC: \n    1596",
+          "IDCC: \n    1597",
+          "IDCC: \n    2420",
+          "IDCC: \n    2609"
+        ],
+        "depth": 1,
+        "name": "Chevalier entreprise",
+        "parentCompany": {
+          "name": "Engie",
+          "nominationLink": "https://app.nomination.fr/account/70305"
+        },
+        "profileUrl": "https://app.nomination.fr/account/38520",
+        "subsidiaries": [],
+        "tag": "BTP, construction",
+        "website": "http://www.cofely-gdfsuez.com"
+      },
+      {
+        "accountId": "50213",
+        "allTags": [
+          "Services environnementaux, facility management",
+          "Filiales de type ETI",
+          "CA entre 50 et 100 M€",
+          "Filiales de groupes",
+          "Entreprises BtoB",
+          "Filiales SBF120",
+          "Filiales du CAC40",
+          "IDCC: \n    1256"
+        ],
+        "depth": 1,
+        "name": "Fraîcheur de Paris",
+        "parentCompany": {
+          "name": "Engie",
+          "nominationLink": "https://app.nomination.fr/account/70305"
+        },
+        "profileUrl": "https://app.nomination.fr/account/50213",
+        "subsidiaries": [],
+        "tag": "Services environnementaux, facility management",
+        "website": "https://www.fraicheurdeparis.fr/"
+      },
+      {
+        "accountId": "309382",
+        "allTags": [
+          "Infrastructures de transport",
+          "Energie",
+          "Filiales de type PME",
+          "CA moins de 5 M€",
+          "100 à 199 salariés",
+          "Filiales de groupes",
+          "Entreprises BtoB",
+          "Filiales SBF120",
+          "Filiales du CAC40",
+          "IDCC: \n    1486"
+        ],
+        "depth": 1,
+        "name": "Engie Vianeo",
+        "parentCompany": {
+          "name": "Engie",
+          "nominationLink": "https://app.nomination.fr/account/70305"
+        },
+        "profileUrl": "https://app.nomination.fr/account/309382",
+        "subsidiaries": [],
+        "tag": "Infrastructures de transport",
+        "website": "https://www.engie-vianeo.com/"
+      },
+      {
+        "accountId": "65511",
+        "allTags": [
+          "BTP, construction",
+          "Filiales de type PME",
+          "CA moins de 5 M€",
+          "Filiales de groupes",
+          "Filiales SBF120",
+          "Filiales du CAC40",
+          "IDCC: \n    1597",
+          "IDCC: \n    2420",
+          "IDCC: \n    2609"
+        ],
+        "depth": 1,
+        "name": "Andrieux et Maumon",
+        "parentCompany": {
+          "name": "Engie",
+          "nominationLink": "https://app.nomination.fr/account/70305"
+        },
+        "profileUrl": "https://app.nomination.fr/account/65511",
+        "subsidiaries": [],
+        "tag": "BTP, construction",
+        "website": null
+      }
+    ],
+    "tag": "Energie",
+    "website": null
+  },
+  "metadata": {
+    "duration": 242957,
+    "endTime": 1760179761387,
+    "errors": [],
+    "maxDepth": 2,
+    "startTime": 1760179518430,
+    "status": "complete",
+    "totalCompaniesScraped": 51,
+    "urlsVisited": [
+      "https://app.nomination.fr/account/70305/subsidiaries",
+      "https://app.nomination.fr/account/62038",
+      "https://app.nomination.fr/account/92612",
+      "https://app.nomination.fr/account/70500",
+      "https://app.nomination.fr/account/57218",
+      "https://app.nomination.fr/account/318958",
+      "https://app.nomination.fr/account/37837",
+      "https://app.nomination.fr/account/53158",
+      "https://app.nomination.fr/account/33482",
+      "https://app.nomination.fr/account/191667",
+      "https://app.nomination.fr/account/111561",
+      "https://app.nomination.fr/account/112478",
+      "https://app.nomination.fr/account/310174",
+      "https://app.nomination.fr/account/70389",
+      "https://app.nomination.fr/account/52671",
+      "https://app.nomination.fr/account/116544",
+      "https://app.nomination.fr/account/308765",
+      "https://app.nomination.fr/account/279836",
+      "https://app.nomination.fr/account/308717",
+      "https://app.nomination.fr/account/62272",
+      "https://app.nomination.fr/account/65902",
+      "https://app.nomination.fr/account/61021",
+      "https://app.nomination.fr/account/27828",
+      "https://app.nomination.fr/account/308704",
+      "https://app.nomination.fr/account/119413",
+      "https://app.nomination.fr/account/103214",
+      "https://app.nomination.fr/account/42600",
+      "https://app.nomination.fr/account/117914",
+      "https://app.nomination.fr/account/188265",
+      "https://app.nomination.fr/account/70279",
+      "https://app.nomination.fr/account/68919",
+      "https://app.nomination.fr/account/41585",
+      "https://app.nomination.fr/account/35928",
+      "https://app.nomination.fr/account/28738",
+      "https://app.nomination.fr/account/55100",
+      "https://app.nomination.fr/account/173007",
+      "https://app.nomination.fr/account/49026",
+      "https://app.nomination.fr/account/54335",
+      "https://app.nomination.fr/account/139407",
+      "https://app.nomination.fr/account/70658",
+      "https://app.nomination.fr/account/297110",
+      "https://app.nomination.fr/account/283930",
+      "https://app.nomination.fr/account/308719",
+      "https://app.nomination.fr/account/118030",
+      "https://app.nomination.fr/account/82574",
+      "https://app.nomination.fr/account/311133",
+      "https://app.nomination.fr/account/23809",
+      "https://app.nomination.fr/account/38520",
+      "https://app.nomination.fr/account/50213",
+      "https://app.nomination.fr/account/309382",
+      "https://app.nomination.fr/account/65511"
+    ]
+  }
+}
