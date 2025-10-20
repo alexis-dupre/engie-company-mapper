@@ -1,59 +1,43 @@
-/**
- * API Routes : Gestion des commentaires sur les entreprises d'un groupe
- * POST /api/admin/groups/[id]/comments - Créer un commentaire
- */
+import { NextResponse } from 'next/server';
+import { storage } from '../../../../../../lib/storage';
 
-import { NextRequest, NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
-import { addComment } from '@/lib/storage';
-
-// Middleware d'authentification simplifié
-function checkAuth(): boolean {
-  const token = cookies().get('admin_session')?.value;
-  return !!token; // Simple check: token exists
-}
-
-/**
- * POST - Créer un nouveau commentaire
- */
-export async function POST(
-  request: NextRequest,
+export async function GET(
+  request: Request,
   { params }: { params: { id: string } }
 ) {
   try {
-    // Vérifier l'authentification
-    if (!checkAuth()) {
-      return NextResponse.json(
-        { success: false, error: 'Non authentifié' },
-        { status: 401 }
-      );
-    }
-
-    const groupId = params.id;
-    const body = await request.json();
-    const { companyAccountId, comment } = body;
-
-    // Validation
-    if (!companyAccountId || !comment) {
-      return NextResponse.json(
-        { success: false, error: 'companyAccountId et comment requis' },
-        { status: 400 }
-      );
-    }
-
-    // Créer le commentaire
-    const newComment = await addComment(groupId, companyAccountId, comment);
-
-    return NextResponse.json({
-      success: true,
-      data: newComment,
-      message: 'Commentaire ajouté avec succès',
-    });
+    const comments = await storage.getComments(params.id);
+    return NextResponse.json({ success: true, comments });
   } catch (error) {
-    console.error('Error creating comment:', error);
-    return NextResponse.json(
-      { success: false, error: 'Erreur serveur' },
-      { status: 500 }
-    );
+    return NextResponse.json({
+      success: false,
+      error: 'Failed to fetch comments'
+    }, { status: 500 });
+  }
+}
+
+export async function POST(
+  request: Request,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const { content, author } = await request.json();
+
+    const comment = {
+      id: Date.now().toString(),
+      groupId: params.id,
+      content,
+      author,
+      createdAt: Date.now(),
+    };
+
+    await storage.addComment(comment);
+
+    return NextResponse.json({ success: true, comment });
+  } catch (error) {
+    return NextResponse.json({
+      success: false,
+      error: 'Failed to add comment'
+    }, { status: 500 });
   }
 }

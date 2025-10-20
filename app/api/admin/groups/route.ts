@@ -1,132 +1,49 @@
-/**
- * API Routes : Gestion des groupes
- * GET /api/admin/groups - Liste tous les groupes
- * POST /api/admin/groups - Crée un nouveau groupe
- */
+import { NextResponse } from 'next/server';
+import { storage } from '../../../../lib/storage';
 
-import { NextRequest, NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
-import {
-  getAllGroupsMetadata,
-  createGroup,
-  initStorage,
-  validateGroupData,
-} from '@/lib/storage';
-import { CompanyData } from '@/types/company';
-import { GroupTag, DiliTrustModule } from '@/types/group';
-
-// Middleware d'authentification simplifié
-function checkAuth(): boolean {
-  const token = cookies().get('admin_session')?.value;
-  return !!token; // Simple check: token exists
-}
-
-/**
- * GET - Récupérer tous les groupes
- */
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
-    // Vérifier l'authentification
-    if (!checkAuth()) {
-      return NextResponse.json(
-        { success: false, error: 'Non authentifié' },
-        { status: 401 }
-      );
-    }
-
-    // Initialiser le storage si nécessaire
-    await initStorage();
-
-    // Récupérer tous les groupes (admin = voir tous, même non publics)
-    const groups = await getAllGroupsMetadata(false);
-
-    return NextResponse.json({
-      success: true,
-      data: groups,
-      total: groups.length,
-    });
+    const groups = await storage.getAllGroups();
+    return NextResponse.json({ success: true, groups });
   } catch (error) {
-    console.error('Error getting groups:', error);
-    return NextResponse.json(
-      { success: false, error: 'Erreur serveur' },
-      { status: 500 }
-    );
+    return NextResponse.json({
+      success: false,
+      error: 'Failed to fetch groups'
+    }, { status: 500 });
   }
 }
 
-/**
- * POST - Créer un nouveau groupe
- */
-export async function POST(request: NextRequest) {
+export async function POST(request: Request) {
   try {
-    // Vérifier l'authentification
-    if (!checkAuth()) {
-      return NextResponse.json(
-        { success: false, error: 'Non authentifié' },
-        { status: 401 }
-      );
+    const formData = await request.formData();
+    const file = formData.get('file') as File;
+    const name = formData.get('name') as string;
+
+    if (!file || !name) {
+      return NextResponse.json({
+        success: false,
+        error: 'Missing data'
+      }, { status: 400 });
     }
 
-    const body = await request.json();
-    const {
+    const text = await file.text();
+    const data = JSON.parse(text);
+
+    const group = {
+      id: Date.now().toString(),
       name,
-      description,
-      tags,
-      dilitrustModules,
-      comments,
-      isPublic,
-      jsonData,
-    } = body;
+      data,
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+    };
 
-    // Validation des champs requis
-    if (!name || !jsonData) {
-      return NextResponse.json(
-        { success: false, error: 'Nom et données JSON requis' },
-        { status: 400 }
-      );
-    }
+    await storage.saveGroup(group);
 
-    // Validation du JSON
-    const validation = validateGroupData(jsonData);
-    if (!validation.valid) {
-      return NextResponse.json(
-        { success: false, error: validation.error },
-        { status: 400 }
-      );
-    }
-
-    // Validation des modules DiliTrust si le tag est présent
-    if (tags && tags.includes('CLIENT_DILITRUST')) {
-      if (!dilitrustModules || dilitrustModules.length === 0) {
-        return NextResponse.json(
-          { success: false, error: 'Modules DiliTrust requis pour les clients DiliTrust' },
-          { status: 400 }
-        );
-      }
-    }
-
-    // Initialiser le storage
-    await initStorage();
-
-    // Créer le groupe
-    const groupMetadata = await createGroup(name, jsonData as CompanyData, {
-      description: description || '',
-      tags: (tags || []) as GroupTag[],
-      dilitrustModules: (dilitrustModules || []) as DiliTrustModule[],
-      comments: comments || '',
-      isPublic: isPublic ?? true,
-    });
-
-    return NextResponse.json({
-      success: true,
-      data: groupMetadata,
-      message: 'Groupe créé avec succès',
-    });
+    return NextResponse.json({ success: true, group });
   } catch (error) {
-    console.error('Error creating group:', error);
-    return NextResponse.json(
-      { success: false, error: 'Erreur serveur' },
-      { status: 500 }
-    );
+    return NextResponse.json({
+      success: false,
+      error: 'Failed to create group'
+    }, { status: 500 });
   }
 }

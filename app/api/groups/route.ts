@@ -1,26 +1,14 @@
-/**
- * API publique - Liste des groupes publics
- * GET /api/groups
- */
+import { NextResponse } from 'next/server';
+import { storage } from '../../../lib/storage';
 
-import { NextRequest, NextResponse } from 'next/server';
-import { getAllGroupsMetadata, initStorage } from '@/lib/storage';
-
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
-    await initStorage();
-    const groups = await getAllGroupsMetadata(true); // true = publics uniquement
-
-    return NextResponse.json({
-      success: true,
-      data: groups,
-      total: groups.length,
-    });
+    const groups = await storage.getAllGroups();
+    return NextResponse.json({ success: true, data: groups });
   } catch (error) {
-    console.error('Error getting public groups:', error);
-    return NextResponse.json(
-      { success: false, error: 'Erreur serveur' },
-      { status: 500 }
-    );
+    return NextResponse.json({
+      success: false,
+      error: 'Failed to fetch groups'
+    }, { status: 500 });
   }
 }
