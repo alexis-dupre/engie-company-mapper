@@ -6,9 +6,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { CompanyMapper } from '@/components/CompanyMapper';
-import { CompanyData } from '@/types/company';
-import { GroupMetadata } from '@/types/group';
+import { CompanyMapper } from '../../../components/CompanyMapper';
+import { CompanyData } from '../../../types/company';
+import { GroupMetadata } from '../../../types/group';
 
 export default function GroupPage() {
   const params = useParams();
