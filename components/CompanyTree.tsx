@@ -1,3 +1,5 @@
+'use client';
+
 /**
  * Composant arbre hiérarchique - Visualisation de la structure organisationnelle
  */

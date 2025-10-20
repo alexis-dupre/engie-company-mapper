@@ -1,3 +1,5 @@
+'use client';
+
 /**
  * Composant Filtres - Recherche et filtrage des entreprises
  */
