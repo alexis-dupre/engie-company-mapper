@@ -1,42 +1,25 @@
-/**
- * API publique - Détails d'un groupe public
- * GET /api/groups/[id]
- */
-
-import { NextRequest, NextResponse } from 'next/server';
-import { getGroupById } from '@/lib/storage';
+import { NextResponse } from 'next/server';
+import { storage } from '../../../../lib/storage';
 
 export async function GET(
-  request: NextRequest,
+  request: Request,
   { params }: { params: { id: string } }
 ) {
   try {
-    const group = await getGroupById(params.id);
+    const group = await storage.getGroup(params.id);
 
     if (!group) {
-      return NextResponse.json(
-        { success: false, error: 'Groupe non trouvé' },
-        { status: 404 }
-      );
+      return NextResponse.json({
+        success: false,
+        error: 'Group not found'
+      }, { status: 404 });
     }
 
-    // Vérifier si le groupe est public
-    if (!group.metadata.isPublic) {
-      return NextResponse.json(
-        { success: false, error: 'Groupe non accessible' },
-        { status: 403 }
-      );
-    }
-
-    return NextResponse.json({
-      success: true,
-      data: { group },
-    });
+    return NextResponse.json({ success: true, group });
   } catch (error) {
-    console.error('Error getting group:', error);
-    return NextResponse.json(
-      { success: false, error: 'Erreur serveur' },
-      { status: 500 }
-    );
+    return NextResponse.json({
+      success: false,
+      error: 'Failed to fetch group'
+    }, { status: 500 });
   }
 }
