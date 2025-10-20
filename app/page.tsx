@@ -1,8 +1,8 @@
+'use client';
+
 /**
  * Page d'accueil publique - Liste des groupes
  */
-
-'use client';
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
