@@ -1,3 +1,5 @@
+'use client';
+
 /**
  * Composant carte d'entreprise - Affiche les informations d'une entreprise
  */
