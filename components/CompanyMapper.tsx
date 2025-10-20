@@ -1,8 +1,8 @@
+'use client';
+
 /**
  * Composant principal - Application de mapping d'entreprises
  */
-
-'use client';
 
 import React, { useState, useMemo } from 'react';
 import { Company, CompanyData, FilterOptions } from '../types/company';
