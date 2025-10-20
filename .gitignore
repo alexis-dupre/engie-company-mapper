@@ -53,3 +53,7 @@ Thumbs.db
 *.tmp
 *.temp
 .cache/
+
+# Data files (multi-groups system)
+data/metadata.json
+data/groups/*.json
