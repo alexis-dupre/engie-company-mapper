@@ -1,108 +1,83 @@
 /**
- * Utilitaires pour la gestion du stockage des groupes et métadonnées
+ * Système de stockage en mémoire pour les groupes (simplifié pour Netlify)
+ * Les données seront perdues au redémarrage - utilisez une vraie base de données en production
  */
 
-import fs from 'fs/promises';
-import path from 'path';
 import { Group, GroupMetadata, MetadataStore, CompanyComment } from '@/types/group';
 import { CompanyData } from '@/types/company';
 
-const DATA_DIR = path.join(process.cwd(), 'data');
-const GROUPS_DIR = path.join(DATA_DIR, 'groups');
-const METADATA_FILE = path.join(DATA_DIR, 'metadata.json');
+// Stockage en mémoire
+const memoryStore: MetadataStore = {
+  groups: {},
+  comments: {},
+  config: {
+    siteName: 'Company Mapper',
+    lastUpdated: new Date().toISOString(),
+  },
+};
+
+// Stockage des données complètes des groupes
+const groupsData: Record<string, CompanyData> = {};
 
 /**
- * Initialise les dossiers de données s'ils n'existent pas
+ * Initialise le stockage (no-op pour mémoire)
  */
 export async function initStorage(): Promise<void> {
-  try {
-    await fs.mkdir(DATA_DIR, { recursive: true });
-    await fs.mkdir(GROUPS_DIR, { recursive: true });
-
-    // Créer metadata.json s'il n'existe pas
-    try {
-      await fs.access(METADATA_FILE);
-    } catch {
-      const initialMetadata: MetadataStore = {
-        groups: {},
-        comments: {},
-        config: {
-          siteName: 'Company Mapper',
-          lastUpdated: new Date().toISOString(),
-        },
-      };
-      await fs.writeFile(METADATA_FILE, JSON.stringify(initialMetadata, null, 2));
-    }
-  } catch (error) {
-    console.error('Error initializing storage:', error);
-    throw error;
-  }
+  // Rien à faire pour le stockage en mémoire
+  return Promise.resolve();
 }
 
 /**
- * Lit le fichier metadata.json
+ * Lit les métadonnées
  */
 export async function readMetadata(): Promise<MetadataStore> {
-  try {
-    const content = await fs.readFile(METADATA_FILE, 'utf-8');
-    return JSON.parse(content);
-  } catch (error) {
-    console.error('Error reading metadata:', error);
-    throw error;
-  }
+  return Promise.resolve(memoryStore);
 }
 
 /**
- * Écrit dans le fichier metadata.json
+ * Écrit les métadonnées
  */
 export async function writeMetadata(metadata: MetadataStore): Promise<void> {
-  try {
-    metadata.config.lastUpdated = new Date().toISOString();
-    await fs.writeFile(METADATA_FILE, JSON.stringify(metadata, null, 2));
-  } catch (error) {
-    console.error('Error writing metadata:', error);
-    throw error;
-  }
+  metadata.config.lastUpdated = new Date().toISOString();
+  memoryStore.groups = metadata.groups;
+  memoryStore.comments = metadata.comments;
+  memoryStore.config = metadata.config;
+  return Promise.resolve();
 }
 
 /**
  * Récupère tous les groupes (métadonnées uniquement)
  */
 export async function getAllGroupsMetadata(publicOnly: boolean = false): Promise<GroupMetadata[]> {
-  const metadata = await readMetadata();
-  const groups = Object.values(metadata.groups);
+  const groups = Object.values(memoryStore.groups);
 
   if (publicOnly) {
-    return groups.filter(g => g.isPublic);
+    return Promise.resolve(groups.filter(g => g.isPublic));
   }
 
-  return groups;
+  return Promise.resolve(groups);
 }
 
 /**
  * Récupère un groupe complet (métadonnées + données)
  */
 export async function getGroupById(groupId: string): Promise<Group | null> {
-  try {
-    const metadata = await readMetadata();
-    const groupMetadata = metadata.groups[groupId];
+  const groupMetadata = memoryStore.groups[groupId];
 
-    if (!groupMetadata) {
-      return null;
-    }
-
-    const dataPath = path.join(GROUPS_DIR, `${groupId}.json`);
-    const dataContent = await fs.readFile(dataPath, 'utf-8');
-    const data: CompanyData = JSON.parse(dataContent);
-
-    return {
-      metadata: groupMetadata,
-      data,
-    };
-  } catch (error) {
-    console.error(`Error getting group ${groupId}:`, error);
-    return null;
+  if (!groupMetadata) {
+    return Promise.resolve(null);
   }
+
+  const data = groupsData[groupId];
+
+  if (!data) {
+    return Promise.resolve(null);
+  }
+
+  return Promise.resolve({
+    metadata: groupMetadata,
+    data,
+  });
 }
 
 /**
@@ -128,16 +103,11 @@ export async function createGroup(
     updatedAt: now,
   };
 
-  // Sauvegarder les données du groupe
-  const dataPath = path.join(GROUPS_DIR, `${groupId}.json`);
-  await fs.writeFile(dataPath, JSON.stringify(data, null, 2));
+  // Sauvegarder en mémoire
+  groupsData[groupId] = data;
+  memoryStore.groups[groupId] = groupMetadata;
 
-  // Mettre à jour les métadonnées
-  const metadata = await readMetadata();
-  metadata.groups[groupId] = groupMetadata;
-  await writeMetadata(metadata);
-
-  return groupMetadata;
+  return Promise.resolve(groupMetadata);
 }
 
 /**
@@ -148,11 +118,10 @@ export async function updateGroup(
   updates: Partial<Omit<GroupMetadata, 'id' | 'createdAt' | 'updatedAt'>>,
   newData?: CompanyData
 ): Promise<GroupMetadata | null> {
-  const metadata = await readMetadata();
-  const existingGroup = metadata.groups[groupId];
+  const existingGroup = memoryStore.groups[groupId];
 
   if (!existingGroup) {
-    return null;
+    return Promise.resolve(null);
   }
 
   // Mettre à jour les métadonnées
@@ -164,51 +133,37 @@ export async function updateGroup(
     updatedAt: new Date().toISOString(),
   };
 
-  metadata.groups[groupId] = updatedGroup;
-  await writeMetadata(metadata);
+  memoryStore.groups[groupId] = updatedGroup;
 
   // Mettre à jour les données si fournies
   if (newData) {
-    const dataPath = path.join(GROUPS_DIR, `${groupId}.json`);
-    await fs.writeFile(dataPath, JSON.stringify(newData, null, 2));
+    groupsData[groupId] = newData;
   }
 
-  return updatedGroup;
+  return Promise.resolve(updatedGroup);
 }
 
 /**
  * Supprime un groupe
  */
 export async function deleteGroup(groupId: string): Promise<boolean> {
-  try {
-    const metadata = await readMetadata();
-
-    if (!metadata.groups[groupId]) {
-      return false;
-    }
-
-    // Supprimer les données
-    const dataPath = path.join(GROUPS_DIR, `${groupId}.json`);
-    await fs.unlink(dataPath);
-
-    // Supprimer les métadonnées
-    delete metadata.groups[groupId];
-    delete metadata.comments[groupId];
-    await writeMetadata(metadata);
-
-    return true;
-  } catch (error) {
-    console.error(`Error deleting group ${groupId}:`, error);
-    return false;
+  if (!memoryStore.groups[groupId]) {
+    return Promise.resolve(false);
   }
+
+  // Supprimer les données
+  delete groupsData[groupId];
+  delete memoryStore.groups[groupId];
+  delete memoryStore.comments[groupId];
+
+  return Promise.resolve(true);
 }
 
 /**
  * Récupère les commentaires d'un groupe
  */
 export async function getGroupComments(groupId: string): Promise<CompanyComment[]> {
-  const metadata = await readMetadata();
-  return metadata.comments[groupId] || [];
+  return Promise.resolve(memoryStore.comments[groupId] || []);
 }
 
 /**
@@ -219,10 +174,8 @@ export async function addComment(
   companyAccountId: string,
   comment: string
 ): Promise<CompanyComment> {
-  const metadata = await readMetadata();
-
-  if (!metadata.comments[groupId]) {
-    metadata.comments[groupId] = [];
+  if (!memoryStore.comments[groupId]) {
+    memoryStore.comments[groupId] = [];
   }
 
   const newComment: CompanyComment = {
@@ -234,10 +187,9 @@ export async function addComment(
     updatedAt: new Date().toISOString(),
   };
 
-  metadata.comments[groupId].push(newComment);
-  await writeMetadata(metadata);
+  memoryStore.comments[groupId].push(newComment);
 
-  return newComment;
+  return Promise.resolve(newComment);
 }
 
 /**
@@ -248,17 +200,16 @@ export async function updateComment(
   commentId: string,
   newComment: string
 ): Promise<CompanyComment | null> {
-  const metadata = await readMetadata();
-  const comments = metadata.comments[groupId];
+  const comments = memoryStore.comments[groupId];
 
   if (!comments) {
-    return null;
+    return Promise.resolve(null);
   }
 
   const commentIndex = comments.findIndex(c => c.id === commentId);
 
   if (commentIndex === -1) {
-    return null;
+    return Promise.resolve(null);
   }
 
   comments[commentIndex] = {
@@ -267,31 +218,28 @@ export async function updateComment(
     updatedAt: new Date().toISOString(),
   };
 
-  await writeMetadata(metadata);
-  return comments[commentIndex];
+  return Promise.resolve(comments[commentIndex]);
 }
 
 /**
  * Supprime un commentaire
  */
 export async function deleteComment(groupId: string, commentId: string): Promise<boolean> {
-  const metadata = await readMetadata();
-  const comments = metadata.comments[groupId];
+  const comments = memoryStore.comments[groupId];
 
   if (!comments) {
-    return false;
+    return Promise.resolve(false);
   }
 
   const filteredComments = comments.filter(c => c.id !== commentId);
 
   if (filteredComments.length === comments.length) {
-    return false;
+    return Promise.resolve(false);
   }
 
-  metadata.comments[groupId] = filteredComments;
-  await writeMetadata(metadata);
+  memoryStore.comments[groupId] = filteredComments;
 
-  return true;
+  return Promise.resolve(true);
 }
 
 /**
