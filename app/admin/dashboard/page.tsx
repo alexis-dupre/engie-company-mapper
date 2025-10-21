@@ -16,12 +16,20 @@ export default function AdminDashboardPage() {
     fetch('/api/admin/groups')
       .then(res => res.json())
       .then(data => {
-        if (data.success) {
-          setGroups(data.data);
+        console.log('[DASHBOARD] API response:', data);
+        if (data.success && Array.isArray(data.groups)) {
+          setGroups(data.groups);
+        } else {
+          console.warn('[DASHBOARD] Invalid groups data, using empty array');
+          setGroups([]);
         }
         setIsLoading(false);
       })
-      .catch(() => setIsLoading(false));
+      .catch(err => {
+        console.error('[DASHBOARD] Error fetching groups:', err);
+        setGroups([]);
+        setIsLoading(false);
+      });
   }, []);
 
   if (isLoading) {
@@ -53,7 +61,7 @@ export default function AdminDashboardPage() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {groups.map(group => (
+          {groups && Array.isArray(groups) && groups.map(group => (
             <Link
               key={group.id}
               href={`/admin/groups/${group.id}`}
