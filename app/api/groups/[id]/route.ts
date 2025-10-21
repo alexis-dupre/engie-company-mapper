@@ -9,20 +9,24 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
+    console.log('[API] GET /api/groups/' + params.id);
     const group = await storage.getGroup(params.id);
 
     if (!group) {
+      console.log('[API] Group not found:', params.id);
       return NextResponse.json({
         success: false,
         error: 'Group not found'
       }, { status: 404 });
     }
 
+    console.log('[API] Group found:', group.name);
     return NextResponse.json({ success: true, group });
   } catch (error) {
+    console.error('[API] Error:', error);
     return NextResponse.json({
       success: false,
-      error: 'Failed to fetch group'
+      error: 'Server error'
     }, { status: 500 });
   }
 }
