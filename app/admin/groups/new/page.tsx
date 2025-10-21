@@ -23,10 +23,14 @@ export default function NewGroupPage() {
   const [modules, setModules] = useState<DiliTrustModule[]>([]);
   const [isPublic, setIsPublic] = useState(false);
   const [jsonData, setJsonData] = useState<any>(null);
+  const [file, setFile] = useState<File | null>(null);
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const uploadedFile = e.target.files?.[0];
+    if (!uploadedFile) return;
+
+    console.log('[CLIENT] File selected:', uploadedFile.name);
+    setFile(uploadedFile);
 
     const reader = new FileReader();
     reader.onload = (event) => {
@@ -34,17 +38,21 @@ export default function NewGroupPage() {
         const data = JSON.parse(event.target?.result as string);
         setJsonData(data);
         setError(null);
+        console.log('[CLIENT] JSON parsed successfully');
 
         // Auto-fill name if available
         if (data.company?.name) {
           setName(data.company.name);
+          console.log('[CLIENT] Auto-filled name:', data.company.name);
         }
       } catch (err) {
+        console.error('[CLIENT] JSON parse error:', err);
         setError('Fichier JSON invalide');
         setJsonData(null);
+        setFile(null);
       }
     };
-    reader.readAsText(file);
+    reader.readAsText(uploadedFile);
   };
 
   const handleTagToggle = (tag: GroupTag) => {
@@ -61,35 +69,72 @@ export default function NewGroupPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    console.log('[CLIENT] ========== START UPLOAD ==========');
+    console.log('[CLIENT] File:', file);
+    console.log('[CLIENT] Group name:', name);
+
+    if (!file) {
+      console.error('[CLIENT] No file selected');
+      alert('No file selected');
+      return;
+    }
+
     setIsLoading(true);
     setError(null);
 
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('name', name);
+
+    console.log('[CLIENT] FormData created');
+    console.log('[CLIENT] FormData file:', formData.get('file'));
+    console.log('[CLIENT] FormData name:', formData.get('name'));
+
     try {
+      console.log('[CLIENT] Sending POST to /api/admin/groups...');
+
       const response = await fetch('/api/admin/groups', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name,
-          description,
-          tags,
-          dilitrustModules: modules,
-          isPublic,
-          data: jsonData,
-        }),
+        body: formData,
       });
 
-      const result = await response.json();
+      console.log('[CLIENT] Response received');
+      console.log('[CLIENT] Response status:', response.status);
+      console.log('[CLIENT] Response ok:', response.ok);
 
-      if (!response.ok || !result.success) {
-        throw new Error(result.error || 'Échec de la création');
+      const contentType = response.headers.get('content-type');
+      console.log('[CLIENT] Content-Type:', contentType);
+
+      let data;
+      if (contentType?.includes('application/json')) {
+        data = await response.json();
+        console.log('[CLIENT] Response JSON:', data);
+      } else {
+        const text = await response.text();
+        console.log('[CLIENT] Response TEXT:', text);
+        throw new Error('Server returned non-JSON response: ' + text);
       }
 
-      setSuccess(true);
-      setTimeout(() => router.push('/admin/dashboard'), 1500);
-    } catch (err: any) {
-      setError(err.message);
+      if (response.ok && data.success) {
+        console.log('[CLIENT] ✅ SUCCESS - Redirecting to /admin');
+        setSuccess(true);
+        setTimeout(() => router.push('/admin/dashboard'), 1500);
+      } else {
+        const errorMsg = `Error ${response.status}: ${data.error || 'Unknown error'}${data.details ? ' - ' + data.details : ''}`;
+        console.error('[CLIENT] ❌ ERROR:', errorMsg);
+        setError(errorMsg);
+        alert(errorMsg);
+      }
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : String(err);
+      console.error('[CLIENT] ❌ CAUGHT ERROR:', errorMsg);
+      console.error('[CLIENT] Error object:', err);
+      setError(errorMsg);
+      alert('CAUGHT ERROR: ' + errorMsg);
     } finally {
       setIsLoading(false);
+      console.log('[CLIENT] ========== END UPLOAD ==========');
     }
   };
 
