@@ -78,7 +78,6 @@ export const CompanyMapper: React.FC<CompanyMapperProps> = ({ data }) => {
   useEffect(() => {
     const token = localStorage.getItem('admin_token');
     const isLoggedIn = localStorage.getItem('admin_logged_in');
-    setIsAdminMode(!!token && !!isLoggedIn);
 
     // Récupérer le groupId depuis l'URL si on est sur /groups/[id]
     const pathParts = window.location.pathname.split('/');
@@ -86,21 +85,44 @@ export const CompanyMapper: React.FC<CompanyMapperProps> = ({ data }) => {
       const id = pathParts[2];
       setGroupId(id);
 
-      // Charger les tags si admin
+      // Vérifier le mode admin en tentant de charger les tags
       if (token && isLoggedIn) {
         fetch(`/api/admin/groups/${id}/tags`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
         })
-          .then(res => res.json())
+          .then(res => {
+            if (res.status === 401) {
+              // Token invalide - nettoyer et désactiver le mode admin
+              localStorage.removeItem('admin_token');
+              localStorage.removeItem('admin_logged_in');
+              setIsAdminMode(false);
+              throw new Error('Non autorisé');
+            }
+            if (!res.ok) {
+              throw new Error('Erreur lors du chargement des tags');
+            }
+            return res.json();
+          })
           .then(data => {
             if (data.success) {
+              // Token valide - activer le mode admin et charger les tags
+              setIsAdminMode(true);
               setTags(data.tags || {});
             }
           })
-          .catch(err => console.error('Error loading tags:', err));
+          .catch(err => {
+            console.error('Error loading tags:', err);
+            setIsAdminMode(false);
+          });
+      } else {
+        // Pas de token - mode visiteur
+        setIsAdminMode(false);
       }
+    } else {
+      // Pas sur une page de groupe - mode visiteur
+      setIsAdminMode(false);
     }
   }, []);
 
