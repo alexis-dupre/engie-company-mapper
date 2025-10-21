@@ -54,3 +54,17 @@ export interface FilterOptions {
   size: string | null;
   hasWebsite: boolean | null;
 }
+
+// Types pour les tags personnalisés
+export type TagType = 'TOP20' | 'TOP50' | 'CLIENT_DILITRUST';
+export type DiliTrustModule = 'BP' | 'CLM' | 'LEM' | 'ELM' | 'DATAROOM';
+
+export interface CustomTag {
+  type: TagType;
+  modules?: DiliTrustModule[]; // Seulement pour CLIENT_DILITRUST
+  addedAt: number;
+}
+
+export interface CompanyTags {
+  [companyAccountId: string]: CustomTag[];
+}

@@ -1,4 +1,5 @@
 import { Redis } from '@upstash/redis';
+import type { CompanyTags, CustomTag, TagType } from '../types/company';
 
 export interface Group {
   id: string;
@@ -110,6 +111,57 @@ export const storage = {
       }
     } catch (error) {
       console.error('Error updating comment:', error);
+      throw error;
+    }
+  },
+
+  async getGroupTags(groupId: string): Promise<CompanyTags> {
+    try {
+      const tags = await redis.get<CompanyTags>(`tags:${groupId}`);
+      return tags || {};
+    } catch (error) {
+      console.error('Error getting tags:', error);
+      return {};
+    }
+  },
+
+  async saveGroupTags(groupId: string, tags: CompanyTags): Promise<void> {
+    try {
+      await redis.set(`tags:${groupId}`, tags);
+    } catch (error) {
+      console.error('Error saving tags:', error);
+      throw error;
+    }
+  },
+
+  async addTagToCompany(groupId: string, companyId: string, tag: CustomTag): Promise<void> {
+    try {
+      const tags = await this.getGroupTags(groupId);
+      if (!tags[companyId]) {
+        tags[companyId] = [];
+      }
+      // Éviter les doublons du même type
+      tags[companyId] = tags[companyId].filter(t => t.type !== tag.type);
+      tags[companyId].push(tag);
+      await this.saveGroupTags(groupId, tags);
+    } catch (error) {
+      console.error('Error adding tag:', error);
+      throw error;
+    }
+  },
+
+  async removeTagFromCompany(groupId: string, companyId: string, tagType: TagType): Promise<void> {
+    try {
+      const tags = await this.getGroupTags(groupId);
+      if (tags[companyId]) {
+        tags[companyId] = tags[companyId].filter(t => t.type !== tagType);
+        if (tags[companyId].length === 0) {
+          delete tags[companyId];
+        }
+        await this.saveGroupTags(groupId, tags);
+      }
+    } catch (error) {
+      console.error('Error removing tag:', error);
       throw error;
     }
   },
