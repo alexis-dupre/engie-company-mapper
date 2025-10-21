@@ -28,28 +28,48 @@ export function TagManager({
   onSave,
   onDelete
 }: TagManagerProps) {
-  const [selectedTagType, setSelectedTagType] = useState<TagType | null>(null);
+  const [selectedTagTypes, setSelectedTagTypes] = useState<Set<TagType>>(new Set());
   const [selectedModules, setSelectedModules] = useState<DiliTrustModule[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const hasTag = (type: TagType) => currentTags.some(t => t.type === type);
 
-  const handleAddTag = async () => {
-    if (!selectedTagType) return;
+  const toggleTagType = (type: TagType) => {
+    if (hasTag(type)) return; // Ne pas permettre d'ajouter un tag déjà présent
+
+    setSelectedTagTypes(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(type)) {
+        newSet.delete(type);
+      } else {
+        newSet.add(type);
+      }
+      return newSet;
+    });
+  };
+
+  const handleAddTags = async () => {
+    if (selectedTagTypes.size === 0) return;
 
     setIsLoading(true);
     try {
-      const tag: CustomTag = {
-        type: selectedTagType,
-        addedAt: Date.now(),
-      };
+      // Ajouter chaque tag sélectionné
+      for (const tagType of Array.from(selectedTagTypes)) {
+        const tag: CustomTag = {
+          type: tagType,
+          addedAt: Date.now(),
+        };
 
-      if (selectedTagType === 'CLIENT_DILITRUST' && selectedModules.length > 0) {
-        tag.modules = selectedModules;
+        // Ajouter les modules seulement pour CLIENT_DILITRUST
+        if (tagType === 'CLIENT_DILITRUST' && selectedModules.length > 0) {
+          tag.modules = selectedModules;
+        }
+
+        await onSave(tag);
       }
 
-      await onSave(tag);
-      setSelectedTagType(null);
+      // Reset après ajout réussi
+      setSelectedTagTypes(new Set());
       setSelectedModules([]);
     } finally {
       setIsLoading(false);
@@ -127,28 +147,26 @@ export function TagManager({
             )}
           </div>
 
-          {/* Ajouter un tag */}
+          {/* Ajouter des tags */}
           <div>
-            <h4 className="font-medium mb-3">Ajouter un tag</h4>
+            <h4 className="font-medium mb-3">Ajouter des tags</h4>
 
             <div className="space-y-3 mb-4">
               {(['TOP20', 'TOP50', 'CLIENT_DILITRUST'] as TagType[]).map((type) => (
                 <label
                   key={type}
                   className={`flex items-center p-3 border-2 rounded-lg cursor-pointer transition-all ${
-                    selectedTagType === type
+                    selectedTagTypes.has(type)
                       ? 'border-blue-500 bg-blue-50'
                       : 'border-gray-200 hover:border-gray-300'
                   } ${hasTag(type) ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
                   <input
-                    type="radio"
-                    name="tagType"
-                    value={type}
-                    checked={selectedTagType === type}
-                    onChange={(e) => setSelectedTagType(e.target.value as TagType)}
+                    type="checkbox"
+                    checked={selectedTagTypes.has(type)}
+                    onChange={() => toggleTagType(type)}
                     disabled={hasTag(type) || isLoading}
-                    className="mr-3"
+                    className="mr-3 h-4 w-4"
                   />
                   <span className="font-medium">{TAG_LABELS[type]}</span>
                   {hasTag(type) && (
@@ -159,9 +177,12 @@ export function TagManager({
             </div>
 
             {/* Modules DiliTrust */}
-            {selectedTagType === 'CLIENT_DILITRUST' && (
+            {selectedTagTypes.has('CLIENT_DILITRUST') && (
               <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-4">
                 <h5 className="font-medium mb-3">Modules DiliTrust</h5>
+                <p className="text-xs text-gray-600 mb-3">
+                  Ces modules s'appliqueront uniquement au tag "Client DiliTrust"
+                </p>
                 <div className="grid grid-cols-2 gap-2">
                   {MODULES.map((module) => (
                     <label
@@ -172,7 +193,7 @@ export function TagManager({
                         type="checkbox"
                         checked={selectedModules.includes(module)}
                         onChange={() => toggleModule(module)}
-                        className="mr-2"
+                        className="mr-2 h-4 w-4"
                       />
                       <span>{module}</span>
                     </label>
@@ -182,15 +203,15 @@ export function TagManager({
             )}
 
             <button
-              onClick={handleAddTag}
+              onClick={handleAddTags}
               disabled={
-                !selectedTagType ||
+                selectedTagTypes.size === 0 ||
                 isLoading ||
-                (selectedTagType === 'CLIENT_DILITRUST' && selectedModules.length === 0)
+                (selectedTagTypes.has('CLIENT_DILITRUST') && selectedModules.length === 0)
               }
               className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
             >
-              {isLoading ? 'Enregistrement...' : 'Ajouter le tag'}
+              {isLoading ? 'Enregistrement...' : `Ajouter ${selectedTagTypes.size} tag(s)`}
             </button>
           </div>
         </div>

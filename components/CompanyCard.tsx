@@ -158,6 +158,12 @@ export const CompanyCard: React.FC<CompanyCardProps> = ({
         )}
       </div>
 
+      {/* Debug logging */}
+      {(() => {
+        console.log('[CompanyCard]', company.name, 'isAdminMode:', isAdminMode, 'onManageTags:', !!onManageTags);
+        return null;
+      })()}
+
       {/* Bouton gérer les tags (admin uniquement) */}
       {isAdminMode && onManageTags && (
         <button
