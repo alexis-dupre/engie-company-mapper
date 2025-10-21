@@ -4,7 +4,7 @@
  * Page de création d'un nouveau groupe - Version simplifiée inline
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 type GroupTag = 'TOP20' | 'TOP50' | 'CLIENT_DILITRUST';
@@ -15,6 +15,7 @@ export default function NewGroupPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const [token, setToken] = useState<string | null>(null);
 
   // Form state
   const [name, setName] = useState('');
@@ -24,6 +25,18 @@ export default function NewGroupPage() {
   const [isPublic, setIsPublic] = useState(false);
   const [jsonData, setJsonData] = useState<any>(null);
   const [file, setFile] = useState<File | null>(null);
+
+  useEffect(() => {
+    const storedToken = localStorage.getItem('admin_token');
+    const isLoggedIn = localStorage.getItem('admin_logged_in');
+
+    if (!isLoggedIn || !storedToken) {
+      router.push('/admin/login');
+      return;
+    }
+
+    setToken(storedToken);
+  }, [router]);
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const uploadedFile = e.target.files?.[0];
@@ -94,8 +107,18 @@ export default function NewGroupPage() {
     try {
       console.log('[CLIENT] Sending POST to /api/admin/groups...');
 
+      if (!token) {
+        console.error('[CLIENT] No token available');
+        setError('Non authentifié - redirection vers login');
+        router.push('/admin/login');
+        return;
+      }
+
       const response = await fetch('/api/admin/groups', {
         method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
         body: formData,
       });
 
@@ -114,6 +137,14 @@ export default function NewGroupPage() {
         const text = await response.text();
         console.log('[CLIENT] Response TEXT:', text);
         throw new Error('Server returned non-JSON response: ' + text);
+      }
+
+      if (response.status === 401) {
+        console.error('[CLIENT] ❌ Unauthorized - clearing token and redirecting');
+        localStorage.removeItem('admin_logged_in');
+        localStorage.removeItem('admin_token');
+        router.push('/admin/login');
+        return;
       }
 
       if (response.ok && data.success) {
