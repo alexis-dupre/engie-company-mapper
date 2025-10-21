@@ -2,12 +2,14 @@
 
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { CompanyMapper } from '../../../components/CompanyMapper';
 
-export default function GroupPage() {
+export default function GroupDetailPage() {
   const params = useParams();
   const router = useRouter();
   const [data, setData] = useState<any>(null);
+  const [groupName, setGroupName] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -20,28 +22,21 @@ export default function GroupPage() {
       return;
     }
 
-    // Fetch le groupe depuis l'API
     fetch(`/api/groups/${groupId}`)
       .then(res => {
-        if (!res.ok) {
-          throw new Error('Groupe non trouvé');
-        }
+        if (!res.ok) throw new Error('Groupe non trouvé');
         return res.json();
       })
       .then(responseData => {
-        console.log('Group data received:', responseData);
-
         if (responseData.success && responseData.group) {
-          // Le groupe contient les données dans group.data
           setData(responseData.group.data);
+          setGroupName(responseData.group.name);
         } else {
           throw new Error('Format de données invalide');
         }
-
         setIsLoading(false);
       })
       .catch(err => {
-        console.error('Error loading group:', err);
         setError(err.message);
         setIsLoading(false);
       });
@@ -52,25 +47,25 @@ export default function GroupPage() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600 font-medium">Chargement des données...</p>
+          <p className="text-gray-600 font-medium">Chargement...</p>
         </div>
       </div>
     );
   }
 
-  if (error) {
+  if (error || !data) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="bg-red-50 border-2 border-red-200 rounded-lg p-8 max-w-md">
           <div className="text-center">
             <span className="text-4xl mb-4 block">⚠️</span>
             <h2 className="text-xl font-bold text-red-900 mb-2">Erreur</h2>
-            <p className="text-red-700 mb-4">{error}</p>
+            <p className="text-red-700 mb-4">{error || 'Données introuvables'}</p>
             <button
-              onClick={() => router.push('/admin')}
+              onClick={() => router.push('/groups')}
               className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
             >
-              Retour à l'accueil
+              Retour aux groupes
             </button>
           </div>
         </div>
@@ -78,25 +73,22 @@ export default function GroupPage() {
     );
   }
 
-  if (!data) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="bg-yellow-50 border-2 border-yellow-200 rounded-lg p-8 max-w-md">
-          <div className="text-center">
-            <span className="text-4xl mb-4 block">📄</span>
-            <h2 className="text-xl font-bold text-yellow-900 mb-2">Aucune donnée</h2>
-            <p className="text-yellow-700 mb-4">Aucune donnée n'a pu être chargée.</p>
-            <button
-              onClick={() => router.push('/admin')}
-              className="px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700"
-            >
-              Retour à l'accueil
-            </button>
-          </div>
+  return (
+    <div>
+      {/* Breadcrumb fixe en haut */}
+      <div className="bg-white border-b sticky top-0 z-50 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 py-3">
+          <nav className="text-sm">
+            <Link href="/" className="text-blue-600 hover:underline">Accueil</Link>
+            <span className="mx-2 text-gray-400">›</span>
+            <Link href="/groups" className="text-blue-600 hover:underline">Groupes</Link>
+            <span className="mx-2 text-gray-400">›</span>
+            <span className="text-gray-900 font-medium">{groupName}</span>
+          </nav>
         </div>
       </div>
-    );
-  }
 
-  return <CompanyMapper data={data} />;
+      <CompanyMapper data={data} />
+    </div>
+  );
 }
