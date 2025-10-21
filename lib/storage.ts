@@ -1,6 +1,4 @@
-import { writeFile, readFile, mkdir } from 'fs/promises';
-import { existsSync } from 'fs';
-import path from 'path';
+import { Redis } from '@upstash/redis';
 
 export interface Group {
   id: string;
@@ -18,122 +16,101 @@ export interface Comment {
   createdAt: number;
 }
 
-// Utiliser /tmp sur Vercel (seul répertoire writable)
-const STORAGE_DIR = '/tmp/company-mapper';
-const GROUPS_FILE = path.join(STORAGE_DIR, 'groups.json');
-const COMMENTS_FILE = path.join(STORAGE_DIR, 'comments.json');
-
-async function ensureStorageExists() {
-  if (!existsSync(STORAGE_DIR)) {
-    await mkdir(STORAGE_DIR, { recursive: true });
-  }
-}
-
-async function readGroups(): Promise<Record<string, Group>> {
-  try {
-    await ensureStorageExists();
-    if (!existsSync(GROUPS_FILE)) {
-      return {};
-    }
-    const data = await readFile(GROUPS_FILE, 'utf-8');
-    return JSON.parse(data);
-  } catch (error) {
-    console.error('Error reading groups:', error);
-    return {};
-  }
-}
-
-async function writeGroups(groups: Record<string, Group>) {
-  try {
-    await ensureStorageExists();
-    await writeFile(GROUPS_FILE, JSON.stringify(groups, null, 2));
-  } catch (error) {
-    console.error('Error writing groups:', error);
-    throw error;
-  }
-}
-
-async function readComments(): Promise<Record<string, Comment[]>> {
-  try {
-    await ensureStorageExists();
-    if (!existsSync(COMMENTS_FILE)) {
-      return {};
-    }
-    const data = await readFile(COMMENTS_FILE, 'utf-8');
-    return JSON.parse(data);
-  } catch (error) {
-    console.error('Error reading comments:', error);
-    return {};
-  }
-}
-
-async function writeComments(comments: Record<string, Comment[]>) {
-  try {
-    await ensureStorageExists();
-    await writeFile(COMMENTS_FILE, JSON.stringify(comments, null, 2));
-  } catch (error) {
-    console.error('Error writing comments:', error);
-    throw error;
-  }
-}
+// Initialiser Redis avec les variables d'environnement Vercel
+const redis = Redis.fromEnv();
 
 export const storage = {
   async getGroup(id: string): Promise<Group | null> {
-    const groups = await readGroups();
-    return groups[id] || null;
+    try {
+      const group = await redis.get<Group>(`group:${id}`);
+      return group;
+    } catch (error) {
+      console.error('Error getting group:', error);
+      return null;
+    }
   },
 
   async getAllGroups(): Promise<Group[]> {
-    const groups = await readGroups();
-    return Object.values(groups);
+    try {
+      const keys = await redis.keys('group:*');
+      if (keys.length === 0) return [];
+
+      const groups = await Promise.all(
+        keys.map(key => redis.get<Group>(key))
+      );
+
+      return groups.filter(Boolean) as Group[];
+    } catch (error) {
+      console.error('Error getting all groups:', error);
+      return [];
+    }
   },
 
   async saveGroup(group: Group): Promise<void> {
-    const groups = await readGroups();
-    groups[group.id] = { ...group, updatedAt: Date.now() };
-    await writeGroups(groups);
+    try {
+      await redis.set(`group:${group.id}`, {
+        ...group,
+        updatedAt: Date.now(),
+      });
+    } catch (error) {
+      console.error('Error saving group:', error);
+      throw error;
+    }
   },
 
   async deleteGroup(id: string): Promise<void> {
-    const groups = await readGroups();
-    delete groups[id];
-    await writeGroups(groups);
-
-    const comments = await readComments();
-    delete comments[id];
-    await writeComments(comments);
+    try {
+      await redis.del(`group:${id}`);
+      await redis.del(`comments:${id}`);
+    } catch (error) {
+      console.error('Error deleting group:', error);
+      throw error;
+    }
   },
 
   async getComments(groupId: string): Promise<Comment[]> {
-    const comments = await readComments();
-    return comments[groupId] || [];
+    try {
+      const comments = await redis.get<Comment[]>(`comments:${groupId}`);
+      return comments || [];
+    } catch (error) {
+      console.error('Error getting comments:', error);
+      return [];
+    }
   },
 
   async addComment(comment: Comment): Promise<void> {
-    const comments = await readComments();
-    if (!comments[comment.groupId]) {
-      comments[comment.groupId] = [];
+    try {
+      const comments = await this.getComments(comment.groupId);
+      comments.push(comment);
+      await redis.set(`comments:${comment.groupId}`, comments);
+    } catch (error) {
+      console.error('Error adding comment:', error);
+      throw error;
     }
-    comments[comment.groupId].push(comment);
-    await writeComments(comments);
   },
 
   async deleteComment(groupId: string, commentId: string): Promise<void> {
-    const comments = await readComments();
-    if (comments[groupId]) {
-      comments[groupId] = comments[groupId].filter(c => c.id !== commentId);
-      await writeComments(comments);
+    try {
+      const comments = await this.getComments(groupId);
+      const filtered = comments.filter(c => c.id !== commentId);
+      await redis.set(`comments:${groupId}`, filtered);
+    } catch (error) {
+      console.error('Error deleting comment:', error);
+      throw error;
     }
   },
 
   async updateComment(groupId: string, commentId: string, content: string): Promise<void> {
-    const comments = await readComments();
-    if (comments[groupId]) {
-      const comment = comments[groupId].find(c => c.id === commentId);
+    try {
+      const comments = await this.getComments(groupId);
+      const comment = comments.find(c => c.id === commentId);
       if (comment) {
         comment.content = content;
-        await writeComments(comments);
+        await redis.set(`comments:${groupId}`, comments);
       }
+    } catch (error) {
+      console.error('Error updating comment:', error);
+      throw error;
     }
   },
 };
