@@ -14,28 +14,43 @@ export default function AdminDashboard() {
   const router = useRouter();
   const [groups, setGroups] = useState<Group[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [token, setToken] = useState<string | null>(null);
 
   useEffect(() => {
+    const storedToken = localStorage.getItem('admin_token');
     const isLoggedIn = localStorage.getItem('admin_logged_in');
-    if (!isLoggedIn) {
+
+    if (!isLoggedIn || !storedToken) {
       router.push('/admin/login');
       return;
     }
 
-    // Fetch groups
-    fetch('/api/admin/groups')
-      .then(res => res.json())
+    setToken(storedToken);
+
+    // Fetch groups avec le token
+    fetch('/api/admin/groups', {
+      headers: {
+        'Authorization': `Bearer ${storedToken}`
+      }
+    })
+      .then(res => {
+        if (res.status === 401) {
+          localStorage.removeItem('admin_logged_in');
+          localStorage.removeItem('admin_token');
+          router.push('/admin/login');
+          throw new Error('Non autorisé');
+        }
+        return res.json();
+      })
       .then(data => {
-        console.log('[ADMIN] Groups data:', data);
         if (data.success && Array.isArray(data.groups)) {
           setGroups(data.groups);
         } else {
-          console.warn('[ADMIN] Invalid groups data, using empty array');
           setGroups([]);
         }
       })
       .catch(err => {
-        console.error('[ADMIN] Error fetching groups:', err);
+        console.error('Error fetching groups:', err);
         setGroups([]);
       })
       .finally(() => {
@@ -45,6 +60,7 @@ export default function AdminDashboard() {
 
   const handleLogout = () => {
     localStorage.removeItem('admin_logged_in');
+    localStorage.removeItem('admin_token');
     router.push('/admin/login');
   };
 
@@ -58,7 +74,7 @@ export default function AdminDashboard() {
               onClick={() => router.push('/admin/groups/new')}
               className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
             >
-              Nouveau groupe
+              ➕ Nouveau groupe
             </button>
             <button
               onClick={handleLogout}
@@ -73,7 +89,7 @@ export default function AdminDashboard() {
       <main className="max-w-7xl mx-auto px-4 py-8">
         <div className="bg-white rounded-lg shadow p-6">
           <h2 className="text-xl font-semibold mb-4">
-            Groupes ({groups.length})
+            Mes groupes ({groups.length})
           </h2>
 
           {isLoading ? (
@@ -88,17 +104,28 @@ export default function AdminDashboard() {
               </p>
             </div>
           ) : (
-            <div className="grid gap-4">
-              {groups && Array.isArray(groups) && groups.map((group) => (
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {groups.map((group) => (
                 <div
                   key={group.id}
-                  className="border rounded-lg p-4 hover:bg-gray-50 cursor-pointer transition-colors"
+                  className="border-2 rounded-lg p-6 hover:shadow-lg cursor-pointer transition-all hover:border-blue-500"
                   onClick={() => router.push(`/group/${group.id}`)}
                 >
-                  <h3 className="font-semibold text-lg">{group.name}</h3>
+                  <h3 className="font-bold text-lg mb-2">{group.name}</h3>
                   <p className="text-sm text-gray-500">
-                    Créé le {new Date(group.createdAt).toLocaleString('fr-FR')}
+                    Créé le {new Date(group.createdAt).toLocaleDateString('fr-FR')}
                   </p>
+                  <div className="mt-4 flex gap-2">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        router.push(`/group/${group.id}`);
+                      }}
+                      className="text-sm text-blue-600 hover:underline"
+                    >
+                      Voir →
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>

@@ -8,16 +8,33 @@ export default function LoginPage() {
   const [email, setEmail] = useState('admin@companymap.com');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
+    setError('');
 
-    // Vérification côté client uniquement
-    if (email === 'admin@companymap.com' && password === 'admin123') {
-      localStorage.setItem('admin_logged_in', 'true');
-      router.push('/admin');
-    } else {
-      setError('Identifiants incorrects');
+    try {
+      const response = await fetch('/api/admin/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success && data.token) {
+        localStorage.setItem('admin_logged_in', 'true');
+        localStorage.setItem('admin_token', data.token);
+        router.push('/admin');
+      } else {
+        setError(data.message || 'Identifiants incorrects');
+      }
+    } catch (err) {
+      setError('Erreur de connexion');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -38,6 +55,7 @@ export default function LoginPage() {
               onChange={(e) => setEmail(e.target.value)}
               className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
               required
+              disabled={isLoading}
             />
           </div>
 
@@ -49,6 +67,7 @@ export default function LoginPage() {
               onChange={(e) => setPassword(e.target.value)}
               className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
               required
+              disabled={isLoading}
             />
           </div>
 
@@ -60,9 +79,10 @@ export default function LoginPage() {
 
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors font-medium"
+            disabled={isLoading}
+            className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors font-medium disabled:opacity-50"
           >
-            Connexion
+            {isLoading ? 'Connexion...' : 'Connexion'}
           </button>
         </form>
 
