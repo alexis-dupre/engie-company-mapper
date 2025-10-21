@@ -4,12 +4,14 @@
  * Composant principal - Application de mapping d'entreprises
  */
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Company, CompanyData, FilterOptions } from '../types/company';
 import { CompanyCard } from './CompanyCard';
 import { CompanyTree } from './CompanyTree';
 import { Dashboard } from './Dashboard';
 import { Filters } from './Filters';
+import { TagManager } from './TagManager';
+import type { CompanyTags, CustomTag, TagType } from '../types/company';
 import {
   calculateStats,
   filterCompanies,
@@ -37,6 +39,14 @@ export const CompanyMapper: React.FC<CompanyMapperProps> = ({ data }) => {
     size: null,
     hasWebsite: null,
   });
+  const [tags, setTags] = useState<CompanyTags>({});
+  const [isTagManagerOpen, setIsTagManagerOpen] = useState(false);
+  const [selectedCompanyForTag, setSelectedCompanyForTag] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
+  const [isAdminMode, setIsAdminMode] = useState(false);
+  const [groupId, setGroupId] = useState<string | null>(null);
   
   // Données calculées
   const stats = useMemo(() => calculateStats(data.company), [data.company]);
@@ -63,7 +73,37 @@ export const CompanyMapper: React.FC<CompanyMapperProps> = ({ data }) => {
     if (!selectedCompanyId) return [];
     return getCompanyPath(data.company, selectedCompanyId);
   }, [selectedCompanyId, data.company]);
-  
+
+  // Vérifier si on est en mode admin et charger les tags
+  useEffect(() => {
+    const token = localStorage.getItem('admin_token');
+    const isLoggedIn = localStorage.getItem('admin_logged_in');
+    setIsAdminMode(!!token && !!isLoggedIn);
+
+    // Récupérer le groupId depuis l'URL si on est sur /groups/[id]
+    const pathParts = window.location.pathname.split('/');
+    if (pathParts[1] === 'groups' && pathParts[2]) {
+      const id = pathParts[2];
+      setGroupId(id);
+
+      // Charger les tags si admin
+      if (token && isLoggedIn) {
+        fetch(`/api/admin/groups/${id}/tags`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        })
+          .then(res => res.json())
+          .then(data => {
+            if (data.success) {
+              setTags(data.tags || {});
+            }
+          })
+          .catch(err => console.error('Error loading tags:', err));
+      }
+    }
+  }, []);
+
   // Gestion de la sélection d'entreprise
   const handleCompanySelect = (company: Company) => {
     setSelectedCompanyId(company.accountId);
@@ -83,7 +123,85 @@ export const CompanyMapper: React.FC<CompanyMapperProps> = ({ data }) => {
     link.click();
     document.body.removeChild(link);
   };
-  
+
+  const handleOpenTagManager = (company: Company) => {
+    setSelectedCompanyForTag({
+      id: company.accountId,
+      name: company.name,
+    });
+    setIsTagManagerOpen(true);
+  };
+
+  const handleSaveTag = async (tag: CustomTag) => {
+    if (!selectedCompanyForTag || !groupId) return;
+
+    const token = localStorage.getItem('admin_token');
+    if (!token) return;
+
+    try {
+      const response = await fetch(`/api/admin/groups/${groupId}/tags`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          companyId: selectedCompanyForTag.id,
+          tag
+        })
+      });
+
+      if (response.ok) {
+        // Recharger les tags
+        const tagsRes = await fetch(`/api/admin/groups/${groupId}/tags`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const tagsData = await tagsRes.json();
+        if (tagsData.success) {
+          setTags(tagsData.tags || {});
+        }
+      }
+    } catch (error) {
+      console.error('Error saving tag:', error);
+      alert('Erreur lors de l\'ajout du tag');
+    }
+  };
+
+  const handleDeleteTag = async (tagType: TagType) => {
+    if (!selectedCompanyForTag || !groupId) return;
+
+    const token = localStorage.getItem('admin_token');
+    if (!token) return;
+
+    try {
+      const response = await fetch(`/api/admin/groups/${groupId}/tags`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          companyId: selectedCompanyForTag.id,
+          tagType
+        })
+      });
+
+      if (response.ok) {
+        // Recharger les tags
+        const tagsRes = await fetch(`/api/admin/groups/${groupId}/tags`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const tagsData = await tagsRes.json();
+        if (tagsData.success) {
+          setTags(tagsData.tags || {});
+        }
+      }
+    } catch (error) {
+      console.error('Error deleting tag:', error);
+      alert('Erreur lors de la suppression du tag');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* En-tête */}
@@ -168,6 +286,9 @@ export const CompanyMapper: React.FC<CompanyMapperProps> = ({ data }) => {
                 company={filteredCompany}
                 onCompanySelect={handleCompanySelect}
                 selectedId={selectedCompanyId || undefined}
+                customTags={tags}
+                isAdminMode={isAdminMode}
+                onManageTags={isAdminMode ? handleOpenTagManager : undefined}
               />
             </div>
           )}
@@ -179,7 +300,7 @@ export const CompanyMapper: React.FC<CompanyMapperProps> = ({ data }) => {
                   Liste des entreprises ({allCompanies.length})
                 </h2>
               </div>
-              
+
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 {allCompanies.map(company => (
                   <CompanyCard
@@ -187,6 +308,9 @@ export const CompanyMapper: React.FC<CompanyMapperProps> = ({ data }) => {
                     company={company}
                     onSelect={handleCompanySelect}
                     isSelected={company.accountId === selectedCompanyId}
+                    customTags={tags[company.accountId] || []}
+                    isAdminMode={isAdminMode}
+                    onManageTags={isAdminMode ? () => handleOpenTagManager(company) : undefined}
                   />
                 ))}
               </div>
@@ -227,6 +351,9 @@ export const CompanyMapper: React.FC<CompanyMapperProps> = ({ data }) => {
                 <CompanyCard
                   company={selectedCompany}
                   showSubsidiaries={false}
+                  customTags={tags[selectedCompany.accountId] || []}
+                  isAdminMode={isAdminMode}
+                  onManageTags={isAdminMode ? () => handleOpenTagManager(selectedCompany) : undefined}
                 />
                 
                 {/* Tags complets */}
@@ -259,6 +386,9 @@ export const CompanyMapper: React.FC<CompanyMapperProps> = ({ data }) => {
                         key={sub.accountId}
                         company={sub}
                         onSelect={handleCompanySelect}
+                        customTags={tags[sub.accountId] || []}
+                        isAdminMode={isAdminMode}
+                        onManageTags={isAdminMode ? () => handleOpenTagManager(sub) : undefined}
                       />
                     ))}
                   </div>
@@ -268,6 +398,21 @@ export const CompanyMapper: React.FC<CompanyMapperProps> = ({ data }) => {
           )}
         </div>
       </div>
+
+      {/* Tag Manager Modal */}
+      {isTagManagerOpen && selectedCompanyForTag && (
+        <TagManager
+          companyId={selectedCompanyForTag.id}
+          companyName={selectedCompanyForTag.name}
+          currentTags={tags[selectedCompanyForTag.id] || []}
+          onClose={() => {
+            setIsTagManagerOpen(false);
+            setSelectedCompanyForTag(null);
+          }}
+          onSave={handleSaveTag}
+          onDelete={handleDeleteTag}
+        />
+      )}
     </div>
   );
 };

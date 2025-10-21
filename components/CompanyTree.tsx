@@ -6,11 +6,15 @@
 
 import React, { useState } from 'react';
 import { Company } from '../types/company';
+import type { CustomTag } from '../types/company';
 
 interface CompanyTreeProps {
   company: Company;
   onCompanySelect?: (company: Company) => void;
   selectedId?: string;
+  customTags?: Record<string, CustomTag[]>;
+  isAdminMode?: boolean;
+  onManageTags?: (company: Company) => void;
 }
 
 interface TreeNodeProps {
@@ -18,13 +22,19 @@ interface TreeNodeProps {
   onCompanySelect?: (company: Company) => void;
   selectedId?: string;
   isRoot?: boolean;
+  customTags?: Record<string, CustomTag[]>;
+  isAdminMode?: boolean;
+  onManageTags?: (company: Company) => void;
 }
 
-const TreeNode: React.FC<TreeNodeProps> = ({ 
-  company, 
+const TreeNode: React.FC<TreeNodeProps> = ({
+  company,
   onCompanySelect,
   selectedId,
-  isRoot = false 
+  isRoot = false,
+  customTags = {},
+  isAdminMode = false,
+  onManageTags,
 }) => {
   const [isExpanded, setIsExpanded] = useState(isRoot || company.depth === 0);
   const hasChildren = company.subsidiaries && company.subsidiaries.length > 0;
@@ -82,6 +92,14 @@ const TreeNode: React.FC<TreeNodeProps> = ({
                 <span className="text-xs font-medium">{company.subsidiaries.length}</span>
               </div>
             )}
+
+            {/* Compteur de tags */}
+            {customTags[company.accountId] && customTags[company.accountId].length > 0 && (
+              <div className="flex items-center gap-1 ml-2">
+                <span className="text-xs opacity-75">🏷️</span>
+                <span className="text-xs font-medium">{customTags[company.accountId].length}</span>
+              </div>
+            )}
           </div>
           
           {/* Informations compactes */}
@@ -101,6 +119,9 @@ const TreeNode: React.FC<TreeNodeProps> = ({
               company={sub}
               onCompanySelect={onCompanySelect}
               selectedId={selectedId}
+              customTags={customTags}
+              isAdminMode={isAdminMode}
+              onManageTags={onManageTags}
             />
           ))}
         </div>
@@ -109,10 +130,13 @@ const TreeNode: React.FC<TreeNodeProps> = ({
   );
 };
 
-export const CompanyTree: React.FC<CompanyTreeProps> = ({ 
-  company, 
+export const CompanyTree: React.FC<CompanyTreeProps> = ({
+  company,
   onCompanySelect,
-  selectedId 
+  selectedId,
+  customTags = {},
+  isAdminMode = false,
+  onManageTags,
 }) => {
   return (
     <div className="w-full overflow-x-auto">
@@ -122,6 +146,9 @@ export const CompanyTree: React.FC<CompanyTreeProps> = ({
           onCompanySelect={onCompanySelect}
           selectedId={selectedId}
           isRoot
+          customTags={customTags}
+          isAdminMode={isAdminMode}
+          onManageTags={onManageTags}
         />
       </div>
     </div>

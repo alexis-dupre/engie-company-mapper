@@ -6,6 +6,7 @@
 
 import React from 'react';
 import { Company } from '../types/company';
+import type { CustomTag } from '../types/company';
 import { extractRevenue, extractEmployeeCount, isInternational } from '../utils/companyUtils';
 
 interface CompanyCardProps {
@@ -13,18 +14,36 @@ interface CompanyCardProps {
   onSelect?: (company: Company) => void;
   isSelected?: boolean;
   showSubsidiaries?: boolean;
+  customTags?: CustomTag[];
+  isAdminMode?: boolean;
+  onManageTags?: () => void;
 }
 
-export const CompanyCard: React.FC<CompanyCardProps> = ({ 
-  company, 
+export const CompanyCard: React.FC<CompanyCardProps> = ({
+  company,
   onSelect,
   isSelected = false,
-  showSubsidiaries = true
+  showSubsidiaries = true,
+  customTags = [],
+  isAdminMode = false,
+  onManageTags,
 }) => {
   const revenue = extractRevenue(company.allTags);
   const employees = extractEmployeeCount(company.allTags);
   const international = isInternational(company);
-  
+
+  const TAG_LABELS: Record<string, string> = {
+    TOP20: 'TOP 20',
+    TOP50: 'TOP 50',
+    CLIENT_DILITRUST: 'Client DiliTrust',
+  };
+
+  const TAG_COLORS: Record<string, string> = {
+    TOP20: 'bg-yellow-100 text-yellow-800 border-yellow-300',
+    TOP50: 'bg-green-100 text-green-800 border-green-300',
+    CLIENT_DILITRUST: 'bg-purple-100 text-purple-800 border-purple-300',
+  };
+
   // Couleur selon la profondeur
   const depthColors = [
     'bg-blue-50 border-blue-300',      // Niveau 0
@@ -59,7 +78,25 @@ export const CompanyCard: React.FC<CompanyCardProps> = ({
           )}
         </div>
       </div>
-      
+
+      {/* Tags personnalisés */}
+      {customTags.length > 0 && (
+        <div className="flex flex-wrap gap-2 mb-3">
+          {customTags.map((tag, idx) => (
+            <div key={idx} className="flex flex-col">
+              <span className={`px-3 py-1 text-xs font-semibold rounded-full border ${TAG_COLORS[tag.type]}`}>
+                {TAG_LABELS[tag.type]}
+              </span>
+              {tag.modules && tag.modules.length > 0 && (
+                <span className="text-xs text-gray-600 mt-1">
+                  {tag.modules.join(', ')}
+                </span>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+
       {/* Informations principales */}
       <div className="grid grid-cols-2 gap-2 mb-3 text-sm">
         {revenue && (
@@ -120,7 +157,20 @@ export const CompanyCard: React.FC<CompanyCardProps> = ({
           </span>
         )}
       </div>
-      
+
+      {/* Bouton gérer les tags (admin uniquement) */}
+      {isAdminMode && onManageTags && (
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onManageTags();
+          }}
+          className="mt-3 w-full px-3 py-2 bg-blue-50 text-blue-700 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors text-sm font-medium"
+        >
+          🏷️ Gérer les tags
+        </button>
+      )}
+
       {/* Liens */}
       <div className="mt-3 pt-3 border-t border-gray-200 flex gap-2">
         <a
