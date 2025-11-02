@@ -60,7 +60,7 @@ export async function DELETE(
   }
 
   try {
-    const { companyId, tagType } = await request.json();
+    const { companyId, tagType, customName } = await request.json();
 
     if (!companyId || !tagType) {
       return NextResponse.json({
@@ -69,7 +69,7 @@ export async function DELETE(
       }, { status: 400 });
     }
 
-    await storage.removeTagFromCompany(params.id, companyId, tagType);
+    await storage.removeTagFromCompany(params.id, companyId, tagType, customName);
     return NextResponse.json({ success: true });
   } catch (error) {
     return NextResponse.json({ success: false, error: 'Server error' }, { status: 500 });

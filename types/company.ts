@@ -56,12 +56,14 @@ export interface FilterOptions {
 }
 
 // Types pour les tags personnalisés
-export type TagType = 'TOP20' | 'TOP50' | 'CLIENT_DILITRUST';
+export type TagType = 'TOP20' | 'TOP50' | 'CLIENT_DILITRUST' | 'CUSTOM';
 export type DiliTrustModule = 'BP' | 'CLM' | 'LEM' | 'ELM' | 'DATAROOM';
 
 export interface CustomTag {
   type: TagType;
   modules?: DiliTrustModule[]; // Seulement pour CLIENT_DILITRUST
+  customName?: string; // Seulement pour CUSTOM - nom libre du tag
+  customColor?: string; // Seulement pour CUSTOM - couleur du tag (hex ou gradient class)
   addedAt: number;
 }
 
