@@ -11,7 +11,8 @@ import { CompanyTree } from './CompanyTree';
 import { Dashboard } from './Dashboard';
 import { Filters } from './Filters';
 import { TagManager } from './TagManager';
-import type { CompanyTags, CustomTag, TagType } from '../types/company';
+import { CommentManager } from './CommentManager';
+import type { CompanyTags, CustomTag, TagType, CompanyComments, Comment } from '../types/company';
 import {
   calculateStats,
   filterCompanies,
@@ -40,8 +41,14 @@ export const CompanyMapper: React.FC<CompanyMapperProps> = ({ data }) => {
     hasWebsite: null,
   });
   const [tags, setTags] = useState<CompanyTags>({});
+  const [comments, setComments] = useState<CompanyComments>({});
   const [isTagManagerOpen, setIsTagManagerOpen] = useState(false);
+  const [isCommentManagerOpen, setIsCommentManagerOpen] = useState(false);
   const [selectedCompanyForTag, setSelectedCompanyForTag] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
+  const [selectedCompanyForComment, setSelectedCompanyForComment] = useState<{
     id: string;
     name: string;
   } | null>(null);
@@ -91,9 +98,20 @@ export const CompanyMapper: React.FC<CompanyMapperProps> = ({ data }) => {
       console.log('[CompanyMapper] Public route detected (/groups/*) - FORCING visitor mode');
       setIsAdminMode(false);
 
-      // Récupérer le groupId pour afficher les tags en lecture seule
+      // Récupérer le groupId pour afficher les tags et commentaires en lecture seule
       if (pathParts[2]) {
-        setGroupId(pathParts[2]);
+        const id = pathParts[2];
+        setGroupId(id);
+
+        // Charger les tags et commentaires (accessibles en lecture seule)
+        fetch(`/api/groups/${id}/company-comments`)
+          .then(res => res.json())
+          .then(data => {
+            if (data.success) {
+              setComments(data.comments || {});
+            }
+          })
+          .catch(err => console.error('[CompanyMapper] Error loading comments:', err));
       }
       return;
     }
@@ -132,6 +150,16 @@ export const CompanyMapper: React.FC<CompanyMapperProps> = ({ data }) => {
               console.log('[CompanyMapper] Token valid - enabling admin mode. Tags loaded:', data.tags);
               setIsAdminMode(true);
               setTags(data.tags || {});
+
+              // Charger également les commentaires (accessibles à tous)
+              fetch(`/api/groups/${id}/company-comments`)
+                .then(res => res.json())
+                .then(commentsData => {
+                  if (commentsData.success) {
+                    setComments(commentsData.comments || {});
+                  }
+                })
+                .catch(err => console.error('[CompanyMapper] Error loading comments:', err));
             } else {
               console.log('[CompanyMapper] Response not successful - disabling admin mode');
               setIsAdminMode(false);
@@ -251,6 +279,81 @@ export const CompanyMapper: React.FC<CompanyMapperProps> = ({ data }) => {
     }
   };
 
+  const handleOpenCommentManager = (company: Company) => {
+    setSelectedCompanyForComment({
+      id: company.accountId,
+      name: company.name,
+    });
+    setIsCommentManagerOpen(true);
+  };
+
+  const handleSaveComment = async (text: string, author?: string) => {
+    if (!selectedCompanyForComment || !groupId) return;
+
+    const token = localStorage.getItem('admin_token');
+    if (!token) return;
+
+    try {
+      const response = await fetch(`/api/groups/${groupId}/company-comments`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          companyId: selectedCompanyForComment.id,
+          text,
+          author
+        })
+      });
+
+      if (response.ok) {
+        // Recharger les commentaires
+        const commentsRes = await fetch(`/api/groups/${groupId}/company-comments`);
+        const commentsData = await commentsRes.json();
+        if (commentsData.success) {
+          setComments(commentsData.comments || {});
+        }
+      }
+    } catch (error) {
+      console.error('Error saving comment:', error);
+      alert('Erreur lors de l\'ajout du commentaire');
+    }
+  };
+
+  const handleDeleteComment = async (commentId: string) => {
+    if (!selectedCompanyForComment || !groupId) return;
+
+    const token = localStorage.getItem('admin_token');
+    if (!token) return;
+
+    try {
+      const response = await fetch(`/api/groups/${groupId}/company-comments`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          companyId: selectedCompanyForComment.id,
+          commentId
+        })
+      });
+
+      if (response.ok) {
+        // Recharger les commentaires
+        const commentsRes = await fetch(`/api/groups/${groupId}/company-comments`);
+        const commentsData = await commentsRes.json();
+        if (commentsData.success) {
+          setComments(commentsData.comments || {});
+        }
+      }
+    } catch (error) {
+      console.error('Error deleting comment:', error);
+      alert('Erreur lors de la suppression du commentaire');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* En-tête */}
@@ -358,8 +461,10 @@ export const CompanyMapper: React.FC<CompanyMapperProps> = ({ data }) => {
                     onSelect={handleCompanySelect}
                     isSelected={company.accountId === selectedCompanyId}
                     customTags={tags[company.accountId] || []}
+                    comments={comments[company.accountId] || []}
                     isAdminMode={isAdminMode}
                     onManageTags={isAdminMode ? () => handleOpenTagManager(company) : undefined}
+                    onManageComments={isAdminMode ? () => handleOpenCommentManager(company) : undefined}
                   />
                 ))}
               </div>
@@ -401,8 +506,10 @@ export const CompanyMapper: React.FC<CompanyMapperProps> = ({ data }) => {
                   company={selectedCompany}
                   showSubsidiaries={false}
                   customTags={tags[selectedCompany.accountId] || []}
+                  comments={comments[selectedCompany.accountId] || []}
                   isAdminMode={isAdminMode}
                   onManageTags={isAdminMode ? () => handleOpenTagManager(selectedCompany) : undefined}
+                  onManageComments={isAdminMode ? () => handleOpenCommentManager(selectedCompany) : undefined}
                 />
                 
                 {/* Tags complets */}
@@ -436,8 +543,10 @@ export const CompanyMapper: React.FC<CompanyMapperProps> = ({ data }) => {
                         company={sub}
                         onSelect={handleCompanySelect}
                         customTags={tags[sub.accountId] || []}
+                        comments={comments[sub.accountId] || []}
                         isAdminMode={isAdminMode}
                         onManageTags={isAdminMode ? () => handleOpenTagManager(sub) : undefined}
+                        onManageComments={isAdminMode ? () => handleOpenCommentManager(sub) : undefined}
                       />
                     ))}
                   </div>
@@ -460,6 +569,21 @@ export const CompanyMapper: React.FC<CompanyMapperProps> = ({ data }) => {
           }}
           onSave={handleSaveTag}
           onDelete={handleDeleteTag}
+        />
+      )}
+
+      {/* Comment Manager Modal */}
+      {isCommentManagerOpen && selectedCompanyForComment && (
+        <CommentManager
+          companyId={selectedCompanyForComment.id}
+          companyName={selectedCompanyForComment.name}
+          currentComments={comments[selectedCompanyForComment.id] || []}
+          onClose={() => {
+            setIsCommentManagerOpen(false);
+            setSelectedCompanyForComment(null);
+          }}
+          onSave={handleSaveComment}
+          onDelete={handleDeleteComment}
         />
       )}
     </div>

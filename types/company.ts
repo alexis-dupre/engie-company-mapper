@@ -68,3 +68,15 @@ export interface CustomTag {
 export interface CompanyTags {
   [companyAccountId: string]: CustomTag[];
 }
+
+// Types pour les commentaires
+export interface Comment {
+  id: string;
+  text: string;
+  createdAt: number;
+  author?: string; // Optionnel : nom de l'admin qui a ajouté le commentaire
+}
+
+export interface CompanyComments {
+  [companyAccountId: string]: Comment[];
+}

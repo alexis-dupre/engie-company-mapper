@@ -1,5 +1,5 @@
 import { Redis } from '@upstash/redis';
-import type { CompanyTags, CustomTag, TagType } from '../types/company';
+import type { CompanyTags, CustomTag, TagType, CompanyComments, Comment as CompanyComment } from '../types/company';
 
 export interface Group {
   id: string;
@@ -162,6 +162,56 @@ export const storage = {
       }
     } catch (error) {
       console.error('Error removing tag:', error);
+      throw error;
+    }
+  },
+
+  // Méthodes pour les commentaires des entreprises
+  async getCompanyComments(groupId: string): Promise<CompanyComments> {
+    try {
+      const comments = await redis.get<CompanyComments>(`company-comments:${groupId}`);
+      return comments || {};
+    } catch (error) {
+      console.error('Error getting company comments:', error);
+      return {};
+    }
+  },
+
+  async saveCompanyComments(groupId: string, comments: CompanyComments): Promise<void> {
+    try {
+      await redis.set(`company-comments:${groupId}`, comments);
+    } catch (error) {
+      console.error('Error saving company comments:', error);
+      throw error;
+    }
+  },
+
+  async addCommentToCompany(groupId: string, companyId: string, comment: CompanyComment): Promise<void> {
+    try {
+      const comments = await this.getCompanyComments(groupId);
+      if (!comments[companyId]) {
+        comments[companyId] = [];
+      }
+      comments[companyId].push(comment);
+      await this.saveCompanyComments(groupId, comments);
+    } catch (error) {
+      console.error('Error adding comment to company:', error);
+      throw error;
+    }
+  },
+
+  async deleteCommentFromCompany(groupId: string, companyId: string, commentId: string): Promise<void> {
+    try {
+      const comments = await this.getCompanyComments(groupId);
+      if (comments[companyId]) {
+        comments[companyId] = comments[companyId].filter(c => c.id !== commentId);
+        if (comments[companyId].length === 0) {
+          delete comments[companyId];
+        }
+        await this.saveCompanyComments(groupId, comments);
+      }
+    } catch (error) {
+      console.error('Error deleting comment from company:', error);
       throw error;
     }
   },
