@@ -104,7 +104,18 @@ export const CompanyMapper: React.FC<CompanyMapperProps> = ({ data }) => {
         const id = pathParts[2];
         setGroupId(id);
 
-        // Charger les tags et commentaires (accessibles en lecture seule)
+        // Charger les tags (accessibles en lecture seule pour tous)
+        fetch(`/api/groups/${id}/tags`)
+          .then(res => res.json())
+          .then(data => {
+            if (data.success) {
+              console.log('[CompanyMapper] Tags loaded in visitor mode:', data.tags);
+              setTags(data.tags || {});
+            }
+          })
+          .catch(err => console.error('[CompanyMapper] Error loading tags:', err));
+
+        // Charger les commentaires (accessibles en lecture seule pour tous)
         fetch(`/api/groups/${id}/company-comments`)
           .then(res => res.json())
           .then(data => {
