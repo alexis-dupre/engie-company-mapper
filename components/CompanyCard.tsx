@@ -6,7 +6,7 @@
 
 import React from 'react';
 import { Company } from '../types/company';
-import type { CustomTag } from '../types/company';
+import type { CustomTag, Comment } from '../types/company';
 import { extractRevenue, extractEmployeeCount, isInternational } from '../utils/companyUtils';
 
 interface CompanyCardProps {
@@ -15,8 +15,10 @@ interface CompanyCardProps {
   isSelected?: boolean;
   showSubsidiaries?: boolean;
   customTags?: CustomTag[];
+  comments?: Comment[];
   isAdminMode?: boolean;
   onManageTags?: () => void;
+  onManageComments?: () => void;
 }
 
 export const CompanyCard: React.FC<CompanyCardProps> = ({
@@ -25,8 +27,10 @@ export const CompanyCard: React.FC<CompanyCardProps> = ({
   isSelected = false,
   showSubsidiaries = true,
   customTags = [],
+  comments = [],
   isAdminMode = false,
   onManageTags,
+  onManageComments,
 }) => {
   const revenue = extractRevenue(company.allTags);
   const employees = extractEmployeeCount(company.allTags);
@@ -97,6 +101,38 @@ export const CompanyCard: React.FC<CompanyCardProps> = ({
         </div>
       )}
 
+      {/* Commentaires */}
+      {comments.length > 0 && (
+        <div className="mb-3 space-y-2">
+          <div className="flex items-center gap-2 text-sm font-medium text-gray-700">
+            <span>💬</span>
+            <span>{comments.length} commentaire{comments.length > 1 ? 's' : ''}</span>
+          </div>
+          <div className="space-y-2">
+            {comments.map((comment) => (
+              <div
+                key={comment.id}
+                className="bg-blue-50 border border-blue-200 rounded-lg p-3"
+              >
+                <div className="text-xs text-gray-500 mb-1">
+                  {comment.author && (
+                    <span className="font-medium text-gray-700">
+                      {comment.author} •{' '}
+                    </span>
+                  )}
+                  {new Date(comment.createdAt).toLocaleDateString('fr-FR', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                  })}
+                </div>
+                <p className="text-sm text-gray-900 whitespace-pre-wrap">{comment.text}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Informations principales */}
       <div className="grid grid-cols-2 gap-2 mb-3 text-sm">
         {revenue && (
@@ -164,17 +200,32 @@ export const CompanyCard: React.FC<CompanyCardProps> = ({
         return null;
       })()}
 
-      {/* Bouton gérer les tags (admin uniquement) */}
-      {isAdminMode && onManageTags && (
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            onManageTags();
-          }}
-          className="mt-3 w-full px-3 py-2 bg-blue-50 text-blue-700 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors text-sm font-medium"
-        >
-          🏷️ Gérer les tags
-        </button>
+      {/* Boutons admin */}
+      {isAdminMode && (onManageTags || onManageComments) && (
+        <div className="mt-3 flex gap-2">
+          {onManageTags && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onManageTags();
+              }}
+              className="flex-1 px-3 py-2 bg-blue-50 text-blue-700 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors text-sm font-medium"
+            >
+              🏷️ Gérer les tags
+            </button>
+          )}
+          {onManageComments && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onManageComments();
+              }}
+              className="flex-1 px-3 py-2 bg-green-50 text-green-700 border border-green-200 rounded-lg hover:bg-green-100 transition-colors text-sm font-medium"
+            >
+              💬 Gérer les commentaires
+            </button>
+          )}
+        </div>
       )}
 
       {/* Liens */}
