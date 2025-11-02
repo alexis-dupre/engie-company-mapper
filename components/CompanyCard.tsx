@@ -54,6 +54,12 @@ export const CompanyCard: React.FC<CompanyCardProps> = ({
     if (tag.type === 'CUSTOM' && tag.customName) {
       return tag.customName;
     }
+
+    // For CLIENT_DILITRUST, integrate modules into the label
+    if (tag.type === 'CLIENT_DILITRUST' && tag.modules && tag.modules.length > 0) {
+      return `${TAG_LABELS[tag.type]} (${tag.modules.join(', ')})`;
+    }
+
     return TAG_LABELS[tag.type];
   };
 
@@ -110,21 +116,17 @@ export const CompanyCard: React.FC<CompanyCardProps> = ({
       {customTags.length > 0 && (
         <div className="flex flex-wrap gap-2 mb-4">
           {customTags.map((tag, idx) => (
-            <div key={`${tag.type}-${tag.customName || idx}`} className="flex flex-col gap-1">
-              <span className={`inline-flex items-center px-3 py-1.5 text-xs font-semibold rounded-lg shadow-sm ${getTagColor(tag)}`}>
-                {getTagLabel(tag)}
-                {tag.type === 'CUSTOM' && (
-                  <svg className="w-3 h-3 ml-1 opacity-75" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
-                  </svg>
-                )}
-              </span>
-              {tag.modules && tag.modules.length > 0 && (
-                <span className="text-xs text-gray-500 pl-1">
-                  {tag.modules.join(', ')}
-                </span>
+            <span
+              key={`${tag.type}-${tag.customName || idx}`}
+              className={`inline-flex items-center px-3 py-1.5 text-xs font-semibold rounded-lg shadow-sm ${getTagColor(tag)}`}
+            >
+              {getTagLabel(tag)}
+              {tag.type === 'CUSTOM' && (
+                <svg className="w-3 h-3 ml-1 opacity-75" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                </svg>
               )}
-            </div>
+            </span>
           ))}
         </div>
       )}
