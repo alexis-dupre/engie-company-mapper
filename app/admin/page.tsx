@@ -1,5 +1,9 @@
 'use client';
 
+/**
+ * Page admin principale - Redesigned with Notion/Shadcn aesthetic
+ */
+
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
@@ -65,20 +69,21 @@ export default function AdminDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white shadow">
+    <div className="min-h-screen bg-background">
+      {/* Header */}
+      <header className="bg-card border-b border-border">
         <div className="max-w-7xl mx-auto px-4 py-6 flex justify-between items-center">
-          <h1 className="text-2xl font-bold">Dashboard Admin</h1>
-          <div className="flex gap-4">
+          <h1 className="text-2xl font-semibold text-foreground">Dashboard Admin</h1>
+          <div className="flex gap-3">
             <button
               onClick={() => router.push('/admin/groups/new')}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors font-medium text-sm"
             >
-              ➕ Nouveau groupe
+              + Nouveau groupe
             </button>
             <button
               onClick={handleLogout}
-              className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+              className="px-4 py-2 bg-secondary text-secondary-foreground rounded-md hover:bg-secondary/80 transition-colors font-medium text-sm"
             >
               Déconnexion
             </button>
@@ -87,19 +92,19 @@ export default function AdminDashboard() {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 py-8">
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-xl font-semibold mb-4">
+        <div className="bg-card border border-border rounded-lg p-6">
+          <h2 className="text-lg font-semibold text-foreground mb-6">
             Mes groupes ({groups.length})
           </h2>
 
           {isLoading ? (
             <div className="text-center py-12">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-blue-600 mx-auto mb-4"></div>
-              <p className="text-gray-500">Chargement...</p>
+              <div className="animate-spin rounded-full h-12 w-12 border-2 border-primary border-t-transparent mx-auto mb-4"></div>
+              <p className="text-muted-foreground text-sm">Chargement...</p>
             </div>
           ) : groups.length === 0 ? (
             <div className="text-center py-12">
-              <p className="text-gray-500 mb-4">
+              <p className="text-muted-foreground mb-4">
                 Aucun groupe créé. Cliquez sur "Nouveau groupe" pour commencer.
               </p>
             </div>
@@ -108,11 +113,11 @@ export default function AdminDashboard() {
               {groups.map((group) => (
                 <div
                   key={group.id}
-                  className="border-2 rounded-lg p-6 hover:shadow-lg cursor-pointer transition-all hover:border-blue-500"
+                  className="border border-border rounded-lg p-6 hover:border-primary/50 hover:bg-muted/50 cursor-pointer transition-all"
                   onClick={() => router.push(`/admin/groups/${group.id}`)}
                 >
-                  <h3 className="font-bold text-lg mb-2">{group.name}</h3>
-                  <p className="text-sm text-gray-500">
+                  <h3 className="font-semibold text-foreground mb-2">{group.name}</h3>
+                  <p className="text-sm text-muted-foreground">
                     Créé le {new Date(group.createdAt).toLocaleDateString('fr-FR')}
                   </p>
                   <div className="mt-4 flex gap-2">
@@ -121,7 +126,7 @@ export default function AdminDashboard() {
                         e.stopPropagation();
                         router.push(`/admin/groups/${group.id}`);
                       }}
-                      className="text-sm text-blue-600 hover:underline"
+                      className="text-sm text-primary hover:underline"
                     >
                       Voir →
                     </button>

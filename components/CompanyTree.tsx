@@ -1,7 +1,7 @@
 'use client';
 
 /**
- * Composant arbre hiérarchique - Visualisation de la structure organisationnelle
+ * Composant arbre hiérarchique - Redesigned with Notion/Shadcn aesthetic
  */
 
 import React, { useState } from 'react';
@@ -39,44 +39,44 @@ const TreeNode: React.FC<TreeNodeProps> = ({
   const [isExpanded, setIsExpanded] = useState(isRoot || company.depth === 0);
   const hasChildren = company.subsidiaries && company.subsidiaries.length > 0;
   const isSelected = company.accountId === selectedId;
-  
-  // Styles selon la profondeur
+
+  // Styles according to depth - subtle pastel colors
   const depthStyles = [
-    { bg: 'bg-blue-100', border: 'border-blue-400', text: 'text-blue-900' },
-    { bg: 'bg-green-100', border: 'border-green-400', text: 'text-green-900' },
-    { bg: 'bg-purple-100', border: 'border-purple-400', text: 'text-purple-900' },
+    { bg: 'bg-blue-50 dark:bg-blue-950/30', border: 'border-blue-200 dark:border-blue-800', text: 'text-blue-900 dark:text-blue-100' },
+    { bg: 'bg-green-50 dark:bg-green-950/30', border: 'border-green-200 dark:border-green-800', text: 'text-green-900 dark:text-green-100' },
+    { bg: 'bg-purple-50 dark:bg-purple-950/30', border: 'border-purple-200 dark:border-purple-800', text: 'text-purple-900 dark:text-purple-100' },
   ];
-  
-  const style = depthStyles[company.depth] || { 
-    bg: 'bg-gray-100', 
-    border: 'border-gray-400', 
-    text: 'text-gray-900' 
+
+  const style = depthStyles[company.depth] || {
+    bg: 'bg-muted',
+    border: 'border-border',
+    text: 'text-foreground'
   };
-  
+
   return (
     <div className="relative">
-      {/* Nœud de l'entreprise */}
+      {/* Company node */}
       <div className="flex items-center gap-2 mb-2">
-        {/* Bouton d'expansion */}
+        {/* Expand/collapse button */}
         {hasChildren && (
           <button
             onClick={() => setIsExpanded(!isExpanded)}
-            className="flex-shrink-0 w-6 h-6 flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 transition-colors"
+            className="flex-shrink-0 w-6 h-6 flex items-center justify-center rounded-md bg-muted hover:bg-muted/80 transition-colors"
             aria-label={isExpanded ? 'Réduire' : 'Développer'}
           >
-            <span className="text-xs font-bold">
+            <span className="text-xs font-bold text-muted-foreground">
               {isExpanded ? '−' : '+'}
             </span>
           </button>
         )}
-        
-        {/* Carte de l'entreprise */}
+
+        {/* Company card */}
         <div
           onClick={() => onCompanySelect?.(company)}
           className={`
-            flex-1 p-3 rounded-lg border-2 cursor-pointer transition-all
+            flex-1 p-3 rounded-md border cursor-pointer transition-all
             ${style.bg} ${style.border} ${style.text}
-            ${isSelected ? 'ring-2 ring-offset-2 ring-blue-500 shadow-lg' : 'hover:shadow-md'}
+            ${isSelected ? 'ring-2 ring-primary ring-offset-2 ring-offset-background shadow-md' : 'hover:shadow-sm'}
           `}
         >
           <div className="flex items-center justify-between">
@@ -84,8 +84,8 @@ const TreeNode: React.FC<TreeNodeProps> = ({
               <h4 className="font-semibold text-sm">{company.name}</h4>
               <p className="text-xs opacity-75">{company.tag}</p>
             </div>
-            
-            {/* Compteur de filiales */}
+
+            {/* Subsidiaries counter */}
             {hasChildren && (
               <div className="flex items-center gap-1 ml-2">
                 <span className="text-xs opacity-75">🏢</span>
@@ -93,7 +93,7 @@ const TreeNode: React.FC<TreeNodeProps> = ({
               </div>
             )}
 
-            {/* Compteur de tags */}
+            {/* Tags counter */}
             {customTags[company.accountId] && customTags[company.accountId].length > 0 && (
               <div className="flex items-center gap-1 ml-2">
                 <span className="text-xs opacity-75">🏷️</span>
@@ -101,18 +101,18 @@ const TreeNode: React.FC<TreeNodeProps> = ({
               </div>
             )}
           </div>
-          
-          {/* Informations compactes */}
+
+          {/* Compact info */}
           <div className="flex gap-3 mt-2 text-xs opacity-75">
             <span>ID: {company.accountId}</span>
             {company.website && <span>🔗</span>}
           </div>
         </div>
       </div>
-      
-      {/* Filiales (enfants) */}
+
+      {/* Subsidiaries (children) */}
       {hasChildren && isExpanded && (
-        <div className="ml-8 border-l-2 border-gray-300 pl-4 space-y-2">
+        <div className="ml-8 border-l border-border pl-4 space-y-2">
           {company.subsidiaries.map(sub => (
             <TreeNode
               key={sub.accountId}
