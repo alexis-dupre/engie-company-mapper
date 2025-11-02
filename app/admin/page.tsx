@@ -109,7 +109,7 @@ export default function AdminDashboard() {
                 <div
                   key={group.id}
                   className="border-2 rounded-lg p-6 hover:shadow-lg cursor-pointer transition-all hover:border-blue-500"
-                  onClick={() => router.push(`/groups/${group.id}`)}
+                  onClick={() => router.push(`/admin/groups/${group.id}`)}
                 >
                   <h3 className="font-bold text-lg mb-2">{group.name}</h3>
                   <p className="text-sm text-gray-500">
@@ -119,7 +119,7 @@ export default function AdminDashboard() {
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        router.push(`/groups/${group.id}`);
+                        router.push(`/admin/groups/${group.id}`);
                       }}
                       className="text-sm text-blue-600 hover:underline"
                     >

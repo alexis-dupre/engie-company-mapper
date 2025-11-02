@@ -78,18 +78,34 @@ export const CompanyMapper: React.FC<CompanyMapperProps> = ({ data }) => {
   useEffect(() => {
     const token = localStorage.getItem('admin_token');
     const isLoggedIn = localStorage.getItem('admin_logged_in');
+    const pathParts = window.location.pathname.split('/');
 
+    console.log('[CompanyMapper] Path:', window.location.pathname);
     console.log('[CompanyMapper] Checking admin mode - Token:', !!token, 'LoggedIn:', !!isLoggedIn);
 
-    // Récupérer le groupId depuis l'URL
-    const pathParts = window.location.pathname.split('/');
-    if (pathParts[1] === 'groups' && pathParts[2]) {
-      const id = pathParts[2];
+    // IMPORTANT: Les tags ne peuvent être gérés QUE depuis l'espace admin (/admin/*)
+    // Sur les routes publiques (/groups/*), on est TOUJOURS en mode visiteur
+    const isPublicRoute = pathParts[1] === 'groups';
+
+    if (isPublicRoute) {
+      console.log('[CompanyMapper] Public route detected (/groups/*) - FORCING visitor mode');
+      setIsAdminMode(false);
+
+      // Récupérer le groupId pour afficher les tags en lecture seule
+      if (pathParts[2]) {
+        setGroupId(pathParts[2]);
+      }
+      return;
+    }
+
+    // Sur les routes admin uniquement, vérifier le token et activer le mode admin
+    if (pathParts[1] === 'admin' && pathParts[2] === 'groups' && pathParts[3]) {
+      const id = pathParts[3];
       setGroupId(id);
 
       // Vérifier le mode admin en validant le token côté serveur
       if (token && isLoggedIn) {
-        console.log('[CompanyMapper] Token found, validating with server for group:', id);
+        console.log('[CompanyMapper] Admin route - validating token for group:', id);
         fetch(`/api/admin/groups/${id}/tags`, {
           headers: {
             'Authorization': `Bearer ${token}`
@@ -131,8 +147,8 @@ export const CompanyMapper: React.FC<CompanyMapperProps> = ({ data }) => {
         setIsAdminMode(false);
       }
     } else {
-      // Pas sur une page de groupe - mode visiteur
-      console.log('[CompanyMapper] Not on a group page - visitor mode');
+      // Autre route - mode visiteur par défaut
+      console.log('[CompanyMapper] Other route - visitor mode');
       setIsAdminMode(false);
     }
   }, []);
