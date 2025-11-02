@@ -4,6 +4,7 @@
 
 import type { Metadata } from 'next';
 import './globals.css';
+import { ClientProviders } from '../components/ClientProviders';
 
 export const metadata: Metadata = {
   title: 'Engie Company Mapper - Visualisation organisationnelle',
@@ -17,9 +18,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="fr">
-      <body className="antialiased">
-        {children}
+    <html lang="fr" suppressHydrationWarning>
+      <body className="antialiased bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300">
+        <ClientProviders>
+          {children}
+        </ClientProviders>
       </body>
     </html>
   );
