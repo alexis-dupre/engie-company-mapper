@@ -78,10 +78,8 @@ export const CompanyMapper: React.FC<CompanyMapperProps> = ({ data }) => {
   useEffect(() => {
     const token = localStorage.getItem('admin_token');
     const isLoggedIn = localStorage.getItem('admin_logged_in');
-    const adminMode = !!token && !!isLoggedIn;
-    setIsAdminMode(adminMode);
 
-    console.log('[CompanyMapper] Admin mode:', adminMode, 'Token:', !!token, 'LoggedIn:', !!isLoggedIn);
+    console.log('[CompanyMapper] Checking admin mode - Token:', !!token, 'LoggedIn:', !!isLoggedIn);
 
     // Récupérer le groupId depuis l'URL
     const pathParts = window.location.pathname.split('/');
@@ -89,25 +87,53 @@ export const CompanyMapper: React.FC<CompanyMapperProps> = ({ data }) => {
       const id = pathParts[2];
       setGroupId(id);
 
-      // Charger les tags si admin
-      if (adminMode) {
-        console.log('[CompanyMapper] Loading tags for group:', id);
+      // Vérifier le mode admin en validant le token côté serveur
+      if (token && isLoggedIn) {
+        console.log('[CompanyMapper] Token found, validating with server for group:', id);
         fetch(`/api/admin/groups/${id}/tags`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
         })
-          .then(res => res.json())
+          .then(res => {
+            console.log('[CompanyMapper] Server response status:', res.status);
+            if (res.status === 401) {
+              // Token invalide - nettoyer et désactiver le mode admin
+              console.log('[CompanyMapper] Token invalid (401) - cleaning up and disabling admin mode');
+              localStorage.removeItem('admin_token');
+              localStorage.removeItem('admin_logged_in');
+              setIsAdminMode(false);
+              throw new Error('Non autorisé');
+            }
+            if (!res.ok) {
+              throw new Error('Erreur lors du chargement des tags');
+            }
+            return res.json();
+          })
           .then(data => {
             if (data.success) {
-              console.log('[CompanyMapper] Tags loaded:', data.tags);
+              // Token valide - activer le mode admin et charger les tags
+              console.log('[CompanyMapper] Token valid - enabling admin mode. Tags loaded:', data.tags);
+              setIsAdminMode(true);
               setTags(data.tags || {});
+            } else {
+              console.log('[CompanyMapper] Response not successful - disabling admin mode');
+              setIsAdminMode(false);
             }
           })
-          .catch(err => console.error('Error loading tags:', err));
+          .catch(err => {
+            console.error('[CompanyMapper] Error validating token:', err);
+            setIsAdminMode(false);
+          });
       } else {
-        console.log('[CompanyMapper] Not loading tags - not admin');
+        // Pas de token - mode visiteur
+        console.log('[CompanyMapper] No token found - visitor mode');
+        setIsAdminMode(false);
       }
+    } else {
+      // Pas sur une page de groupe - mode visiteur
+      console.log('[CompanyMapper] Not on a group page - visitor mode');
+      setIsAdminMode(false);
     }
   }, []);
 
