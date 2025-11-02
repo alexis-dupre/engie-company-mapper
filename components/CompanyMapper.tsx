@@ -355,27 +355,50 @@ export const CompanyMapper: React.FC<CompanyMapperProps> = ({ data }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* En-tête */}
-      <header className="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-indigo-50">
+      {/* En-tête moderne avec glassmorphism */}
+      <header className="bg-white/80 backdrop-blur-md border-b border-gray-200/50 shadow-md sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
           <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">
-                {data.company.name} - Mapping organisationnel
-              </h1>
-              <p className="text-sm text-gray-600 mt-1">
-                {allCompanies.length} entreprise{allCompanies.length > 1 ? 's' : ''} • 
-                Dernière mise à jour: {new Date(data.metadata.endTime).toLocaleDateString('fr-FR')}
-              </p>
+            <div className="flex-1">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-pink-500 to-rose-500 flex items-center justify-center shadow-md">
+                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                  </svg>
+                </div>
+                <div>
+                  <h1 className="text-2xl font-bold text-gray-900">
+                    {data.company.name}
+                  </h1>
+                  <p className="text-sm text-gray-500">Mapping organisationnel</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-4 text-sm">
+                <div className="inline-flex items-center gap-2 px-3 py-1 bg-gray-100 rounded-full">
+                  <svg className="w-4 h-4 text-pink-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                  </svg>
+                  <span className="font-semibold text-gray-900">{allCompanies.length}</span>
+                  <span className="text-gray-600">entreprise{allCompanies.length > 1 ? 's' : ''}</span>
+                </div>
+                <div className="inline-flex items-center gap-2 px-3 py-1 bg-gray-100 rounded-full">
+                  <svg className="w-4 h-4 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <span className="text-gray-600">{new Date(data.metadata.endTime).toLocaleDateString('fr-FR', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+                </div>
+              </div>
             </div>
-            
+
             <button
               onClick={handleExportCSV}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium text-sm flex items-center gap-2"
+              className="px-6 py-3 bg-gradient-to-r from-pink-500 to-rose-500 text-white rounded-xl hover:shadow-lg transform hover:scale-105 transition-all duration-300 font-semibold text-sm flex items-center gap-2"
             >
-              <span>📥</span>
-              Exporter CSV
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+              </svg>
+              <span>Exporter CSV</span>
             </button>
           </div>
         </div>
@@ -430,10 +453,17 @@ export const CompanyMapper: React.FC<CompanyMapperProps> = ({ data }) => {
           )}
           
           {viewMode === 'tree' && (
-            <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">
-                Arbre hiérarchique
-              </h2>
+            <div className="bg-white/80 backdrop-blur-sm p-8 rounded-2xl border border-gray-200/50 shadow-xl">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center">
+                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+                  </svg>
+                </div>
+                <h2 className="text-2xl font-bold text-gray-900">
+                  Arbre hiérarchique
+                </h2>
+              </div>
               <CompanyTree
                 company={filteredCompany}
                 onCompanySelect={handleCompanySelect}
@@ -446,10 +476,16 @@ export const CompanyMapper: React.FC<CompanyMapperProps> = ({ data }) => {
           )}
           
           {viewMode === 'list' && (
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <h2 className="text-xl font-semibold text-gray-900">
-                  Liste des entreprises ({allCompanies.length})
+            <div className="space-y-6">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-400 to-indigo-500 flex items-center justify-center">
+                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                  </svg>
+                </div>
+                <h2 className="text-2xl font-bold text-gray-900">
+                  Liste des entreprises
+                  <span className="ml-2 text-lg font-normal text-gray-500">({allCompanies.length})</span>
                 </h2>
               </div>
 
@@ -470,38 +506,44 @@ export const CompanyMapper: React.FC<CompanyMapperProps> = ({ data }) => {
               </div>
               
               {allCompanies.length === 0 && (
-                <div className="text-center py-12 bg-white rounded-lg border border-gray-200">
-                  <p className="text-gray-500">Aucune entreprise ne correspond aux critères</p>
+                <div className="col-span-full text-center py-16 bg-white/80 backdrop-blur-sm rounded-2xl border border-gray-200/50 shadow-lg">
+                  <svg className="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <p className="text-lg font-medium text-gray-600">Aucune entreprise ne correspond aux critères</p>
+                  <p className="text-sm text-gray-500 mt-2">Essayez de modifier vos filtres</p>
                 </div>
               )}
             </div>
           )}
           
           {viewMode === 'detail' && selectedCompany && (
-            <div className="space-y-4">
+            <div className="space-y-6">
               {/* Breadcrumb */}
               {selectedPath.length > 1 && (
-                <div className="bg-white p-4 rounded-lg border border-gray-200">
-                  <div className="flex items-center gap-2 text-sm text-gray-600 flex-wrap">
+                <div className="bg-white/80 backdrop-blur-sm p-5 rounded-2xl border border-gray-200/50 shadow-md">
+                  <div className="flex items-center gap-3 text-sm flex-wrap">
                     {selectedPath.map((company, idx) => (
                       <React.Fragment key={company.accountId}>
                         <button
                           onClick={() => handleCompanySelect(company)}
-                          className="hover:text-blue-600 transition-colors"
+                          className="font-medium text-gray-700 hover:text-pink-600 transition-colors px-3 py-1.5 rounded-lg hover:bg-pink-50"
                         >
                           {company.name}
                         </button>
                         {idx < selectedPath.length - 1 && (
-                          <span className="text-gray-400">→</span>
+                          <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                          </svg>
                         )}
                       </React.Fragment>
                     ))}
                   </div>
                 </div>
               )}
-              
+
               {/* Détails de l'entreprise */}
-              <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
+              <div className="bg-white/80 backdrop-blur-sm p-8 rounded-2xl border border-gray-200/50 shadow-xl">
                 <CompanyCard
                   company={selectedCompany}
                   showSubsidiaries={false}
@@ -513,15 +555,20 @@ export const CompanyMapper: React.FC<CompanyMapperProps> = ({ data }) => {
                 />
                 
                 {/* Tags complets */}
-                <div className="mt-6 pt-6 border-t border-gray-200">
-                  <h3 className="font-semibold text-gray-900 mb-3">
-                    Tous les tags ({selectedCompany.allTags.length})
-                  </h3>
+                <div className="mt-8 pt-8 border-t border-gray-200">
+                  <div className="flex items-center gap-2 mb-4">
+                    <svg className="w-5 h-5 text-pink-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                    </svg>
+                    <h3 className="font-bold text-lg text-gray-900">
+                      Tous les tags <span className="text-gray-500 font-normal">({selectedCompany.allTags.length})</span>
+                    </h3>
+                  </div>
                   <div className="flex flex-wrap gap-2">
                     {selectedCompany.allTags.map((tag, idx) => (
                       <span
                         key={idx}
-                        className="px-3 py-1 bg-gray-100 border border-gray-300 text-gray-700 text-sm rounded"
+                        className="inline-flex items-center px-3 py-1.5 bg-gradient-to-r from-gray-50 to-gray-100 text-gray-700 text-sm rounded-lg font-medium hover:from-gray-100 hover:to-gray-200 transition-all"
                       >
                         {tag}
                       </span>
@@ -529,13 +576,21 @@ export const CompanyMapper: React.FC<CompanyMapperProps> = ({ data }) => {
                   </div>
                 </div>
               </div>
-              
+
               {/* Filiales directes */}
               {selectedCompany.subsidiaries.length > 0 && (
-                <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
-                  <h3 className="font-semibold text-gray-900 mb-4">
-                    Filiales directes ({selectedCompany.subsidiaries.length})
-                  </h3>
+                <div className="bg-white/80 backdrop-blur-sm p-8 rounded-2xl border border-gray-200/50 shadow-xl">
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-400 to-cyan-500 flex items-center justify-center">
+                      <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                      </svg>
+                    </div>
+                    <h3 className="text-2xl font-bold text-gray-900">
+                      Filiales directes
+                      <span className="ml-2 text-lg font-normal text-gray-500">({selectedCompany.subsidiaries.length})</span>
+                    </h3>
+                  </div>
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                     {selectedCompany.subsidiaries.map(sub => (
                       <CompanyCard
@@ -590,7 +645,7 @@ export const CompanyMapper: React.FC<CompanyMapperProps> = ({ data }) => {
   );
 };
 
-// Bouton d'onglet
+// Bouton d'onglet moderne
 interface TabButtonProps {
   active: boolean;
   onClick: () => void;
@@ -603,16 +658,19 @@ const TabButton: React.FC<TabButtonProps> = ({ active, onClick, icon, label }) =
     <button
       onClick={onClick}
       className={`
-        px-4 py-2 rounded-lg font-medium text-sm transition-all whitespace-nowrap
-        flex items-center gap-2
+        relative px-6 py-3 rounded-xl font-semibold text-sm transition-all duration-300 whitespace-nowrap
+        flex items-center gap-2 overflow-hidden
         ${active
-          ? 'bg-blue-600 text-white shadow-md'
-          : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200'
+          ? 'bg-gradient-to-r from-pink-500 to-rose-500 text-white shadow-lg shadow-pink-200 scale-105'
+          : 'bg-white/80 backdrop-blur-sm text-gray-700 hover:bg-white hover:shadow-md border border-gray-200 hover:border-gray-300'
         }
       `}
     >
-      <span>{icon}</span>
-      <span>{label}</span>
+      {active && (
+        <div className="absolute inset-0 bg-white/20 animate-pulse"></div>
+      )}
+      <span className="text-lg">{icon}</span>
+      <span className="relative z-10">{label}</span>
     </button>
   );
 };
