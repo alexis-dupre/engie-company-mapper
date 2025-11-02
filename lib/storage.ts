@@ -140,8 +140,18 @@ export const storage = {
       if (!tags[companyId]) {
         tags[companyId] = [];
       }
-      // Éviter les doublons du même type
-      tags[companyId] = tags[companyId].filter(t => t.type !== tag.type);
+
+      // Éviter les doublons
+      if (tag.type === 'CUSTOM' && tag.customName) {
+        // Pour les tags custom, éviter les doublons basés sur customName
+        tags[companyId] = tags[companyId].filter(
+          t => !(t.type === 'CUSTOM' && t.customName === tag.customName)
+        );
+      } else {
+        // Pour les tags prédéfinis, éviter les doublons basés sur type
+        tags[companyId] = tags[companyId].filter(t => t.type !== tag.type);
+      }
+
       tags[companyId].push(tag);
       await this.saveGroupTags(groupId, tags);
     } catch (error) {
@@ -150,11 +160,20 @@ export const storage = {
     }
   },
 
-  async removeTagFromCompany(groupId: string, companyId: string, tagType: TagType): Promise<void> {
+  async removeTagFromCompany(groupId: string, companyId: string, tagType: TagType, customName?: string): Promise<void> {
     try {
       const tags = await this.getGroupTags(groupId);
       if (tags[companyId]) {
-        tags[companyId] = tags[companyId].filter(t => t.type !== tagType);
+        if (tagType === 'CUSTOM' && customName) {
+          // Pour les tags custom, filtrer par customName
+          tags[companyId] = tags[companyId].filter(
+            t => !(t.type === 'CUSTOM' && t.customName === customName)
+          );
+        } else {
+          // Pour les tags prédéfinis, filtrer par type
+          tags[companyId] = tags[companyId].filter(t => t.type !== tagType);
+        }
+
         if (tags[companyId].length === 0) {
           delete tags[companyId];
         }

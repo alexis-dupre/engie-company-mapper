@@ -2,6 +2,7 @@
 
 /**
  * TagManager Modal - Redesigned with modern Airbnb-inspired aesthetic
+ * Includes custom tags creation feature
  */
 
 import { useState } from 'react';
@@ -13,20 +14,31 @@ interface TagManagerProps {
   currentTags: CustomTag[];
   onClose: () => void;
   onSave: (tag: CustomTag) => Promise<void>;
-  onDelete: (tagType: TagType) => Promise<void>;
+  onDelete: (tagType: TagType, customName?: string) => Promise<void>;
 }
 
-const TAG_LABELS: Record<TagType, string> = {
+const TAG_LABELS: Record<Exclude<TagType, 'CUSTOM'>, string> = {
   TOP20: 'TOP 20',
   TOP50: 'TOP 50',
   CLIENT_DILITRUST: 'Client DiliTrust',
 };
 
-const TAG_GRADIENTS: Record<TagType, string> = {
+const TAG_GRADIENTS: Record<Exclude<TagType, 'CUSTOM'>, string> = {
   TOP20: 'from-yellow-400 to-orange-500',
   TOP50: 'from-green-400 to-emerald-500',
   CLIENT_DILITRUST: 'from-purple-400 to-pink-500',
 };
+
+const PRESET_COLORS = [
+  { name: 'Rouge', gradient: 'from-red-400 to-rose-500' },
+  { name: 'Orange', gradient: 'from-orange-400 to-amber-500' },
+  { name: 'Jaune', gradient: 'from-yellow-400 to-orange-500' },
+  { name: 'Vert', gradient: 'from-green-400 to-emerald-500' },
+  { name: 'Bleu', gradient: 'from-blue-400 to-cyan-500' },
+  { name: 'Indigo', gradient: 'from-indigo-400 to-purple-500' },
+  { name: 'Violet', gradient: 'from-purple-400 to-pink-500' },
+  { name: 'Rose', gradient: 'from-pink-400 to-rose-500' },
+];
 
 const MODULES: DiliTrustModule[] = ['BP', 'CLM', 'LEM', 'ELM', 'DATAROOM'];
 
@@ -42,9 +54,19 @@ export function TagManager({
   const [selectedModules, setSelectedModules] = useState<DiliTrustModule[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  const hasTag = (type: TagType) => currentTags.some(t => t.type === type);
+  // Custom tag creation state
+  const [customTagName, setCustomTagName] = useState('');
+  const [customTagColor, setCustomTagColor] = useState(PRESET_COLORS[0].gradient);
+  const [isCreatingCustom, setIsCreatingCustom] = useState(false);
 
-  const toggleTagType = (type: TagType) => {
+  const hasTag = (type: TagType, customName?: string) => {
+    if (type === 'CUSTOM' && customName) {
+      return currentTags.some(t => t.type === 'CUSTOM' && t.customName === customName);
+    }
+    return currentTags.some(t => t.type === type);
+  };
+
+  const toggleTagType = (type: Exclude<TagType, 'CUSTOM'>) => {
     if (hasTag(type)) return;
 
     setSelectedTagTypes(prev => {
@@ -64,6 +86,8 @@ export function TagManager({
     setIsLoading(true);
     try {
       for (const tagType of Array.from(selectedTagTypes)) {
+        if (tagType === 'CUSTOM') continue; // Skip CUSTOM in predefined tags
+
         const tag: CustomTag = {
           type: tagType,
           addedAt: Date.now(),
@@ -83,10 +107,42 @@ export function TagManager({
     }
   };
 
-  const handleDeleteTag = async (type: TagType) => {
+  const handleAddCustomTag = async () => {
+    if (!customTagName.trim()) return;
+
+    if (hasTag('CUSTOM', customTagName)) {
+      alert('Un tag avec ce nom existe déjà !');
+      return;
+    }
+
     setIsLoading(true);
     try {
-      await onDelete(type);
+      const tag: CustomTag = {
+        type: 'CUSTOM',
+        customName: customTagName.trim(),
+        customColor: customTagColor,
+        addedAt: Date.now(),
+      };
+
+      await onSave(tag);
+
+      // Reset form
+      setCustomTagName('');
+      setCustomTagColor(PRESET_COLORS[0].gradient);
+      setIsCreatingCustom(false);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleDeleteTag = async (tag: CustomTag) => {
+    setIsLoading(true);
+    try {
+      if (tag.type === 'CUSTOM' && tag.customName) {
+        await onDelete('CUSTOM', tag.customName);
+      } else {
+        await onDelete(tag.type);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -98,6 +154,20 @@ export function TagManager({
         ? prev.filter(m => m !== module)
         : [...prev, module]
     );
+  };
+
+  const getTagLabel = (tag: CustomTag) => {
+    if (tag.type === 'CUSTOM' && tag.customName) {
+      return tag.customName;
+    }
+    return TAG_LABELS[tag.type as Exclude<TagType, 'CUSTOM'>];
+  };
+
+  const getTagGradient = (tag: CustomTag) => {
+    if (tag.type === 'CUSTOM' && tag.customColor) {
+      return tag.customColor;
+    }
+    return TAG_GRADIENTS[tag.type as Exclude<TagType, 'CUSTOM'>];
   };
 
   return (
@@ -148,16 +218,21 @@ export function TagManager({
               </div>
             ) : (
               <div className="space-y-3">
-                {currentTags.map((tag) => (
+                {currentTags.map((tag, index) => (
                   <div
-                    key={tag.type}
+                    key={`${tag.type}-${tag.customName || index}`}
                     className="group relative bg-white border-2 border-gray-200 hover:border-gray-300 rounded-2xl p-5 transition-all duration-200 hover:shadow-md"
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex-1">
                         <div className="flex items-center gap-3 mb-2">
-                          <span className={`inline-flex items-center px-4 py-1.5 bg-gradient-to-r ${TAG_GRADIENTS[tag.type]} text-white text-sm font-semibold rounded-lg shadow-sm`}>
-                            {TAG_LABELS[tag.type]}
+                          <span className={`inline-flex items-center px-4 py-1.5 bg-gradient-to-r ${getTagGradient(tag)} text-white text-sm font-semibold rounded-lg shadow-sm`}>
+                            {getTagLabel(tag)}
+                            {tag.type === 'CUSTOM' && (
+                              <svg className="w-3 h-3 ml-1.5 opacity-75" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                              </svg>
+                            )}
                           </span>
                           <span className="text-xs text-gray-400">
                             Ajouté le {new Date(tag.addedAt).toLocaleDateString('fr-FR')}
@@ -178,7 +253,7 @@ export function TagManager({
                         )}
                       </div>
                       <button
-                        onClick={() => handleDeleteTag(tag.type)}
+                        onClick={() => handleDeleteTag(tag)}
                         disabled={isLoading}
                         className="ml-4 w-10 h-10 rounded-xl bg-red-50 hover:bg-red-100 text-red-600 hover:text-red-700 transition-all duration-200 disabled:opacity-50 flex items-center justify-center"
                       >
@@ -193,17 +268,17 @@ export function TagManager({
             )}
           </div>
 
-          {/* Ajouter des tags */}
-          <div>
+          {/* Ajouter des tags prédéfinis */}
+          <div className="mb-8">
             <div className="flex items-center gap-2 mb-4">
               <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
               </svg>
-              <h3 className="text-lg font-bold text-gray-900">Ajouter des tags</h3>
+              <h3 className="text-lg font-bold text-gray-900">Ajouter des tags prédéfinis</h3>
             </div>
 
             <div className="space-y-3 mb-6">
-              {(['TOP20', 'TOP50', 'CLIENT_DILITRUST'] as TagType[]).map((type) => {
+              {(['TOP20', 'TOP50', 'CLIENT_DILITRUST'] as Exclude<TagType, 'CUSTOM'>[]).map((type) => {
                 const isAlreadyAdded = hasTag(type);
                 const isSelected = selectedTagTypes.has(type);
 
@@ -289,40 +364,148 @@ export function TagManager({
                 </div>
               </div>
             )}
+
+            {/* Add predefined tags button */}
+            {selectedTagTypes.size > 0 && (
+              <button
+                onClick={handleAddTags}
+                disabled={
+                  isLoading ||
+                  (selectedTagTypes.has('CLIENT_DILITRUST') && selectedModules.length === 0)
+                }
+                className="w-full px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-xl hover:shadow-lg transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none font-semibold transition-all duration-200"
+              >
+                {isLoading ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <svg className="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Enregistrement...
+                  </span>
+                ) : (
+                  `Ajouter ${selectedTagTypes.size} tag${selectedTagTypes.size > 1 ? 's' : ''}`
+                )}
+              </button>
+            )}
+          </div>
+
+          {/* Créer un tag personnalisé */}
+          <div className="border-t-2 border-gray-200 pt-8">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <svg className="w-5 h-5 text-pink-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                </svg>
+                <h3 className="text-lg font-bold text-gray-900">Créer un tag personnalisé</h3>
+              </div>
+              {!isCreatingCustom && (
+                <button
+                  onClick={() => setIsCreatingCustom(true)}
+                  className="px-4 py-2 bg-gradient-to-r from-pink-500 to-rose-500 text-white text-sm font-semibold rounded-lg hover:shadow-md transition-all duration-200"
+                >
+                  Nouveau tag
+                </button>
+              )}
+            </div>
+
+            {isCreatingCustom && (
+              <div className="bg-gradient-to-br from-pink-50 to-rose-50 border-2 border-pink-200 rounded-2xl p-6 animate-slide-down">
+                {/* Tag name input */}
+                <div className="mb-4">
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Nom du tag
+                  </label>
+                  <input
+                    type="text"
+                    value={customTagName}
+                    onChange={(e) => setCustomTagName(e.target.value)}
+                    placeholder="Ex: Client Stratégique, Prospect, etc."
+                    className="w-full px-4 py-3 border-2 border-pink-200 rounded-xl focus:border-pink-500 focus:outline-none transition-colors"
+                    maxLength={30}
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    {customTagName.length}/30 caractères
+                  </p>
+                </div>
+
+                {/* Color selector */}
+                <div className="mb-6">
+                  <label className="block text-sm font-semibold text-gray-700 mb-3">
+                    Couleur du tag
+                  </label>
+                  <div className="grid grid-cols-4 gap-3">
+                    {PRESET_COLORS.map((color) => (
+                      <button
+                        key={color.gradient}
+                        onClick={() => setCustomTagColor(color.gradient)}
+                        className={`
+                          relative h-12 rounded-xl bg-gradient-to-r ${color.gradient} transition-all duration-200
+                          ${customTagColor === color.gradient ? 'ring-4 ring-pink-500 scale-110' : 'hover:scale-105'}
+                        `}
+                      >
+                        {customTagColor === color.gradient && (
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <svg className="w-6 h-6 text-white drop-shadow-lg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                            </svg>
+                          </div>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Preview */}
+                {customTagName && (
+                  <div className="mb-6">
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      Aperçu
+                    </label>
+                    <div className="flex items-center gap-2">
+                      <span className={`inline-flex items-center px-4 py-1.5 bg-gradient-to-r ${customTagColor} text-white text-sm font-semibold rounded-lg shadow-sm`}>
+                        {customTagName}
+                        <svg className="w-3 h-3 ml-1.5 opacity-75" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                        </svg>
+                      </span>
+                    </div>
+                  </div>
+                )}
+
+                {/* Action buttons */}
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => {
+                      setIsCreatingCustom(false);
+                      setCustomTagName('');
+                      setCustomTagColor(PRESET_COLORS[0].gradient);
+                    }}
+                    className="flex-1 px-4 py-2 bg-white text-gray-700 border-2 border-gray-300 rounded-xl hover:bg-gray-50 font-semibold transition-all duration-200"
+                  >
+                    Annuler
+                  </button>
+                  <button
+                    onClick={handleAddCustomTag}
+                    disabled={!customTagName.trim() || isLoading}
+                    className="flex-1 px-4 py-2 bg-gradient-to-r from-pink-500 to-rose-500 text-white rounded-xl hover:shadow-lg transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none font-semibold transition-all duration-200"
+                  >
+                    {isLoading ? 'Création...' : 'Créer le tag'}
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
         {/* Footer */}
         <div className="border-t border-gray-200 p-6 bg-gray-50">
-          <div className="flex gap-3">
-            <button
-              onClick={onClose}
-              className="flex-1 px-6 py-3 bg-white text-gray-700 border-2 border-gray-300 rounded-xl hover:bg-gray-50 hover:border-gray-400 font-semibold transition-all duration-200"
-            >
-              Annuler
-            </button>
-            <button
-              onClick={handleAddTags}
-              disabled={
-                selectedTagTypes.size === 0 ||
-                isLoading ||
-                (selectedTagTypes.has('CLIENT_DILITRUST') && selectedModules.length === 0)
-              }
-              className="flex-1 px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-xl hover:shadow-lg transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none font-semibold transition-all duration-200"
-            >
-              {isLoading ? (
-                <span className="flex items-center justify-center gap-2">
-                  <svg className="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  Enregistrement...
-                </span>
-              ) : (
-                `Ajouter ${selectedTagTypes.size} tag${selectedTagTypes.size > 1 ? 's' : ''}`
-              )}
-            </button>
-          </div>
+          <button
+            onClick={onClose}
+            className="w-full px-6 py-3 bg-white text-gray-700 border-2 border-gray-300 rounded-xl hover:bg-gray-50 hover:border-gray-400 font-semibold transition-all duration-200"
+          >
+            Fermer
+          </button>
         </div>
       </div>
 

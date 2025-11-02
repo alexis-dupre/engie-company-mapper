@@ -256,7 +256,7 @@ export const CompanyMapper: React.FC<CompanyMapperProps> = ({ data }) => {
     }
   };
 
-  const handleDeleteTag = async (tagType: TagType) => {
+  const handleDeleteTag = async (tagType: TagType, customName?: string) => {
     if (!selectedCompanyForTag || !groupId) return;
 
     const token = localStorage.getItem('admin_token');
@@ -271,7 +271,8 @@ export const CompanyMapper: React.FC<CompanyMapperProps> = ({ data }) => {
         },
         body: JSON.stringify({
           companyId: selectedCompanyForTag.id,
-          tagType
+          tagType,
+          customName
         })
       });
 
