@@ -1,5 +1,9 @@
 'use client';
 
+/**
+ * Page de connexion admin - Redesigned with Notion/Shadcn aesthetic
+ */
+
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
@@ -39,40 +43,46 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-      <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-        <h1 className="text-2xl font-bold text-center mb-6">Administration</h1>
-        <p className="text-center text-gray-600 mb-6">
+    <div className="min-h-screen bg-background flex items-center justify-center p-4">
+      <div className="bg-card border border-border p-8 rounded-lg w-full max-w-md">
+        <h1 className="text-2xl font-semibold text-foreground text-center mb-2">
+          Administration
+        </h1>
+        <p className="text-center text-muted-foreground text-sm mb-8">
           Connectez-vous pour gérer les groupes
         </p>
 
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label className="block text-sm font-medium mb-2">Email</label>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-foreground mb-1.5">
+              Email
+            </label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+              className="w-full px-3 py-2 bg-background border border-input rounded-md text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-input transition-shadow"
               required
               disabled={isLoading}
             />
           </div>
 
-          <div className="mb-6">
-            <label className="block text-sm font-medium mb-2">Mot de passe</label>
+          <div>
+            <label className="block text-sm font-medium text-foreground mb-1.5">
+              Mot de passe
+            </label>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+              className="w-full px-3 py-2 bg-background border border-input rounded-md text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-input transition-shadow"
               required
               disabled={isLoading}
             />
           </div>
 
           {error && (
-            <div className="mb-4 p-3 bg-red-50 text-red-700 rounded-lg text-sm">
+            <div className="p-3 bg-destructive/10 border border-destructive/20 text-destructive rounded-md text-sm">
               {error}
             </div>
           )}
@@ -80,13 +90,13 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors font-medium disabled:opacity-50"
+            className="w-full bg-primary text-primary-foreground py-2 rounded-md hover:bg-primary/90 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {isLoading ? 'Connexion...' : 'Connexion'}
+            {isLoading ? 'Connexion...' : 'Se connecter'}
           </button>
         </form>
 
-        <p className="text-center text-sm text-gray-500 mt-4">
+        <p className="text-center text-sm text-muted-foreground mt-6">
           Par défaut : admin@companymap.com / admin123
         </p>
       </div>
