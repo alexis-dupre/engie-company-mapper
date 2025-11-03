@@ -11,8 +11,9 @@ import { GroupMetadata } from '@/types/group';
 export default function AdminDashboardPage() {
   const [groups, setGroups] = useState<GroupMetadata[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
-  useEffect(() => {
+  const loadGroups = () => {
     fetch('/api/admin/groups')
       .then(res => res.json())
       .then(data => {
@@ -30,7 +31,49 @@ export default function AdminDashboardPage() {
         setGroups([]);
         setIsLoading(false);
       });
+  };
+
+  useEffect(() => {
+    loadGroups();
   }, []);
+
+  const handleDeleteGroup = async (groupId: string, groupName: string) => {
+    if (!confirm(`Êtes-vous sûr de vouloir supprimer le groupe "${groupName}" ?\n\nCette action est irréversible.`)) {
+      return;
+    }
+
+    setDeletingId(groupId);
+
+    const token = localStorage.getItem('admin_token');
+    if (!token) {
+      alert('Non autorisé');
+      setDeletingId(null);
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/admin/groups/${groupId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        // Recharger la liste des groupes
+        loadGroups();
+      } else {
+        alert('Erreur lors de la suppression : ' + (data.error || 'Erreur inconnue'));
+      }
+    } catch (error) {
+      console.error('Error deleting group:', error);
+      alert('Erreur lors de la suppression du groupe');
+    } finally {
+      setDeletingId(null);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -62,40 +105,67 @@ export default function AdminDashboardPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {groups && Array.isArray(groups) && groups.map(group => (
-            <Link
+            <div
               key={group.id}
-              href={`/admin/groups/${group.id}`}
-              className="bg-card p-6 rounded-lg border border-border hover:border-primary/50 hover:bg-muted/50 transition-all"
+              className="bg-card p-6 rounded-lg border border-border hover:border-primary/50 hover:bg-muted/50 transition-all relative"
             >
-              <h3 className="text-lg font-semibold text-foreground mb-2">
-                {group.name}
-              </h3>
-              {group.description && (
-                <p className="text-sm text-muted-foreground mb-3">{group.description}</p>
-              )}
+              <Link
+                href={`/admin/groups/${group.id}`}
+                className="block"
+              >
+                <h3 className="text-lg font-semibold text-foreground mb-2">
+                  {group.name}
+                </h3>
+                {group.description && (
+                  <p className="text-sm text-muted-foreground mb-3">{group.description}</p>
+                )}
 
-              <div className="flex flex-wrap gap-2 mb-3">
-                {group.tags.map(tag => (
-                  <span
-                    key={tag}
-                    className="px-2 py-1 bg-primary/10 text-primary text-xs rounded-full"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-
-              {group.dilitrustModules.length > 0 && (
-                <div className="text-xs text-muted-foreground">
-                  Modules : {group.dilitrustModules.join(', ')}
+                <div className="flex flex-wrap gap-2 mb-3">
+                  {group.tags.map(tag => (
+                    <span
+                      key={tag}
+                      className="px-2 py-1 bg-primary/10 text-primary text-xs rounded-full"
+                    >
+                      {tag}
+                    </span>
+                  ))}
                 </div>
-              )}
 
-              <div className="mt-4 pt-4 border-t border-border flex items-center justify-between text-xs text-muted-foreground">
-                <span>{group.isPublic ? '🌐 Public' : '🔒 Privé'}</span>
-                <span>{new Date(group.updatedAt).toLocaleDateString('fr-FR')}</span>
-              </div>
-            </Link>
+                {group.dilitrustModules.length > 0 && (
+                  <div className="text-xs text-muted-foreground">
+                    Modules : {group.dilitrustModules.join(', ')}
+                  </div>
+                )}
+
+                <div className="mt-4 pt-4 border-t border-border flex items-center justify-between text-xs text-muted-foreground">
+                  <span>{group.isPublic ? '🌐 Public' : '🔒 Privé'}</span>
+                  <span>{new Date(group.updatedAt).toLocaleDateString('fr-FR')}</span>
+                </div>
+              </Link>
+
+              {/* Bouton de suppression */}
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  handleDeleteGroup(group.id, group.name);
+                }}
+                disabled={deletingId === group.id}
+                className="absolute top-4 right-4 p-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                title="Supprimer ce groupe"
+              >
+                {deletingId === group.id ? (
+                  <svg className="w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                  </svg>
+                ) : (
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                )}
+              </button>
+            </div>
           ))}
         </div>
 
