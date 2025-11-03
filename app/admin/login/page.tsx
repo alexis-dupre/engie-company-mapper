@@ -95,10 +95,6 @@ export default function LoginPage() {
             {isLoading ? 'Connexion...' : 'Se connecter'}
           </button>
         </form>
-
-        <p className="text-center text-sm text-muted-foreground mt-6">
-          Par défaut : admin@companymap.com / admin123
-        </p>
       </div>
     </div>
   );

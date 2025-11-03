@@ -122,13 +122,6 @@ export const LoginForm: React.FC = () => {
             </button>
           </div>
         </form>
-
-        {/* Note de développement */}
-        <div className="text-center">
-          <p className="text-xs text-gray-500">
-            Par défaut : admin@companymap.com / admin123
-          </p>
-        </div>
       </div>
     </div>
   );
