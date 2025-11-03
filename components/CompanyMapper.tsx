@@ -202,7 +202,7 @@ export const CompanyMapper: React.FC<CompanyMapperProps> = ({ data }) => {
 
   // Export CSV
   const handleExportCSV = () => {
-    const csv = exportToCSV(filteredCompany);
+    const csv = exportToCSV(filteredCompany, tags, comments);
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     const url = URL.createObjectURL(blob);

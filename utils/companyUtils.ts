@@ -247,9 +247,13 @@ export function isInternational(company: Company): boolean {
 /**
  * Export des données en CSV
  */
-export function exportToCSV(company: Company): string {
+export function exportToCSV(
+  company: Company,
+  customTags?: { [companyAccountId: string]: any[] },
+  comments?: { [companyAccountId: string]: any[] }
+): string {
   const allCompanies = flattenCompanies(company);
-  
+
   const headers = [
     'ID',
     'Nom',
@@ -261,22 +265,52 @@ export function exportToCSV(company: Company): string {
     'CA',
     'Employés',
     'International',
-    'Tags'
+    'Tags',
+    'Tags_perso',
+    'Commentaires'
   ].join(',');
-  
-  const rows = allCompanies.map(c => [
-    c.accountId,
-    `"${c.name}"`,
-    `"${c.tag || ''}"`,
-    c.depth,
-    `"${c.parentCompany?.name || ''}"`,
-    c.subsidiaries.length,
-    `"${c.website || ''}"`,
-    `"${extractRevenue(c.allTags) || ''}"`,
-    `"${extractEmployeeCount(c.allTags) || ''}"`,
-    isInternational(c) ? 'Oui' : 'Non',
-    `"${c.allTags.join('; ')}"`,
-  ].join(','));
-  
+
+  const rows = allCompanies.map(c => {
+    // Récupérer les tags personnalisés pour cette entreprise
+    const companyCustomTags = customTags?.[c.accountId] || [];
+    const customTagsStr = companyCustomTags.map(tag => {
+      if (tag.type === 'CUSTOM' && tag.customName) {
+        return tag.customName;
+      } else if (tag.type === 'TOP20') {
+        return 'TOP 20';
+      } else if (tag.type === 'TOP50') {
+        return 'TOP 50';
+      } else if (tag.type === 'CLIENT_DILITRUST') {
+        const modules = tag.modules?.join(', ') || '';
+        return `Client DiliTrust${modules ? ` (${modules})` : ''}`;
+      }
+      return '';
+    }).filter(t => t).join('; ');
+
+    // Récupérer les commentaires pour cette entreprise
+    const companyComments = comments?.[c.accountId] || [];
+    const commentsStr = companyComments.map(comment => {
+      const date = new Date(comment.createdAt).toLocaleDateString('fr-FR');
+      const author = comment.author ? ` [${comment.author}]` : '';
+      return `${date}${author}: ${comment.text}`;
+    }).join(' | ');
+
+    return [
+      c.accountId,
+      `"${c.name}"`,
+      `"${c.tag || ''}"`,
+      c.depth,
+      `"${c.parentCompany?.name || ''}"`,
+      c.subsidiaries.length,
+      `"${c.website || ''}"`,
+      `"${extractRevenue(c.allTags) || ''}"`,
+      `"${extractEmployeeCount(c.allTags) || ''}"`,
+      isInternational(c) ? 'Oui' : 'Non',
+      `"${c.allTags.join('; ')}"`,
+      `"${customTagsStr}"`,
+      `"${commentsStr}"`,
+    ].join(',');
+  });
+
   return [headers, ...rows].join('\n');
 }
